@@ -1,0 +1,6 @@
+@CadianArchive_HostAddress = http://localhost:5027
+
+GET {{CadianArchive_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
