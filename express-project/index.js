@@ -32,6 +32,7 @@ class PostsService {
     let post = {
       id: id,
       content: postData.content,
+      author_id: postData.author_id,
       tags: postData.tags
     }
 
@@ -43,6 +44,7 @@ class PostsService {
     let post = {
       id: UUID.v7(),
       content: postData.content,
+      author_id: postData.author_id,
       tags: postData.tags
     }
 
@@ -55,10 +57,15 @@ class PostsService {
   }
 }
 
-// Define post schema
+
+// Define post schemas
 const shape = yup.object().shape({
   tags: yup.array().of(yup.string()).required(),
-  content: yup.string().required()
+  author_id: yup.number().required(),
+  content: yup.array().of(yup.object().shape({
+    type: yup.string().oneOf(['image', 'paragrapth', 'header', 'title']),
+    data: yup.string()
+  }))
 })
 
 const posts = new PostsService()
@@ -220,7 +227,7 @@ function getIdParam(req, res) {
  */
 function createTests() {
   for (let i = 0; i < 25; i++) {
-    let content = `Content of ${i}`
+    let content = {type: 'paragraph', data: `Content of ${i}`}
     let tags = []
 
     let tagCount = Math.floor(Math.random() * 10)
@@ -230,6 +237,7 @@ function createTests() {
 
     posts.createPost({
       content: content,
+      author_id: Math.floor(100000 * Math.random()),
       tags: tags
     })
   }
