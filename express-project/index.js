@@ -16,7 +16,7 @@ class PostsService {
 
   }
 
-  listPosts() {
+  async listPosts() {
     let arr = []
     for (let key in this.#posts) {
       arr.push(this.#posts[key])
@@ -24,11 +24,11 @@ class PostsService {
     return arr
   }
 
-  getPostById(id) {
+  async getPostById(id) {
     return this.#posts[id]
   }
 
-  modifyPost(id, postData) {
+  async modifyPost(id, postData) {
     let post = {
       id: id,
       content: postData.content,
@@ -39,7 +39,7 @@ class PostsService {
     return post
   }
 
-  createPost(postData) {
+  async createPost(postData) {
     let post = {
       id: UUID.v7(),
       content: postData.content,
@@ -50,7 +50,7 @@ class PostsService {
     return post
   }
 
-  deletePost(postId) {
+  async deletePost(postId) {
     delete this.#posts[postId]
   }
 }
@@ -82,7 +82,7 @@ app.post("/posts", async (req, res) => {
     return
   }
 
-  let created = posts.createPost(j)
+  let created = await posts.createPost(j)
   res.status(201).send(created)
 })
 
@@ -98,29 +98,29 @@ app.put("/posts/:id", async (req, res) => {
     return
   }
 
-  let existing = posts.getPostById(id)
+  let existing = await posts.getPostById(id)
   if (existing == null) {
     res.status(404).send({error: `No post with ID ${id} found`})
     return
   }
 
-  let newObj = posts.modifyPost(id, j)
+  let newObj = await posts.modifyPost(id, j)
   res.status(200).send(newObj)
 })
 
 // Get all posts
-app.get("/posts", (req, res) => {
-  res.status(200).send(posts.listPosts())
+app.get("/posts", async (req, res) => {
+  res.status(200).send(await posts.listPosts())
 })
 
 // Get specific post
-app.get("/posts/:id", (req, res) => {
+app.get("/posts/:id", async (req, res) => {
   let id = getIdParam(req, res)
   if (id == null) {
     return
   }
 
-  let post = posts.getPostById(id)
+  let post = await posts.getPostById(id)
 
   if (post == null) {
     res.status(404).send({error: `Post with UUID ${id} not found`})
@@ -131,20 +131,20 @@ app.get("/posts/:id", (req, res) => {
 })
 
 // Delete post
-app.delete("/posts/:id", (req, res) => {
+app.delete("/posts/:id", async (req, res) => {
   let id = getIdParam(req, res)
   if (id == null) {
     return
   }
 
-  let post = posts.getPostById(id)
+  let post = await posts.getPostById(id)
 
   if (post == null) {
     res.status(404).send({error: `Post with UUID ${id} not found`})
     return 
   }
 
-  posts.deletePost(id)
+  await posts.deletePost(id)
   res.status(200).send()
 })
 
