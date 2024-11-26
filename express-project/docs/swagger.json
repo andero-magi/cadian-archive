@@ -5,7 +5,7 @@
       "version": "1.0"
     },
     "paths": {
-      "/api/posts": {
+      "/posts": {
         "get": {
           "tags": [
             "Posts"
@@ -122,7 +122,7 @@
           }
         }
       },
-      "/api/posts/{id}": {
+      "/posts/{id}": {
         "get": {
           "tags": [
             "Posts"
