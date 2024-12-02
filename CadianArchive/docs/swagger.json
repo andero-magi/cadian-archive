@@ -1,0 +1,418 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "New API",
+        "version": "1.0.0",
+        "description": "A brand new API with no content.  Go nuts!"
+    },
+    "paths": {
+        "/games": {
+            "get": {
+                "tags": [
+                    "games"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "examples": {
+                                    "List of games": {
+                                        "value": "    {id: 1, name: \"Game 1\" },\r\n    {id: 2, name: \"Game 2\" },\r\n    {id: 3, name: \"Game 3\" }"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "return a list of games"
+                    }
+                },
+                "summary": "get list of all games from api",
+                "description": "returns list of all games in the api throught the requesting user\n"
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Data of game that the user want to add\n",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Game"
+                            },
+                            "examples": {
+                                "Example of a game": {
+                                    "value": {
+                                        "name": "Minecraft"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "tags": [
+                    "games"
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "examples": {
+                                    "Game that is added": {
+                                        "value": {
+                                            "id": 4,
+                                            "name": "Minecraft"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Return code 201 to user if creation of new game was successful"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                },
+                                "examples": {
+                                    "Game not found error": {
+                                        "value": {
+                                            "error": "Game was not found"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "could not find the game in the array"
+                    }
+                },
+                "summary": "add new game",
+                "description": "Adds a new game into the array"
+            }
+        },
+        "/games/{id}": {
+            "get": {
+                "tags": [
+                    "games"
+                ],
+                "parameters": [
+                    {
+                        "examples": {
+                            "Example of Id": {
+                                "value": "1"
+                            }
+                        },
+                        "name": "id",
+                        "description": "Id of the game the user has requested\n\n",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "examples": {
+                                    "id1": {
+                                        "value": {
+                                            "id": 1,
+                                            "name": "Game 1"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "everything oki doki"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                },
+                                "examples": {
+                                    "Invalid game id": {
+                                        "value": [
+                                            {
+                                                "error": "Invalid id inserted"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Return status code 400 to the user if an invalid id was entered"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                },
+                                "examples": {
+                                    "Game /w+ was not found": {
+                                        "value": [
+                                            {
+                                                "error": "Game:\\w+ was not found"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Game with this Id not found\n"
+                    }
+                },
+                "operationId": "id",
+                "summary": "Get full details of a gmae",
+                "description": "Returns full details of a given id game\n\n"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Game"
+                            },
+                            "examples": {
+                                "Example of a game": {
+                                    "value": {
+                                        "id": 4,
+                                        "name": "Minecraft"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "tags": [
+                    "games"
+                ],
+                "parameters": [
+                    {
+                        "examples": {
+                            "Id of a game": {
+                                "value": "1"
+                            }
+                        },
+                        "name": "id",
+                        "description": "id of game to be updated",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "examples": {
+                                    "Example of a game": {
+                                        "value": {
+                                            "id": 4,
+                                            "name": "Minecraft"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "returns modified game to the user\n"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                },
+                                "examples": {
+                                    "Missing paramaters": {
+                                        "value": [
+                                            {
+                                                "error": "One or multible parameters are missing"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "when missing one or multible paramaters"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                },
+                                "examples": {
+                                    "Game not found": {
+                                        "value": [
+                                            {
+                                                "error": "Game not found"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "the game to be updated is not found in the array"
+                    }
+                },
+                "operationId": "Operation ID",
+                "summary": "Update a game",
+                "description": "return updated game when modification of a game is  successful\n"
+            },
+            "delete": {
+                "tags": [
+                    "games"
+                ],
+                "parameters": [
+                    {
+                        "examples": {
+                            "Exampel of game id": {
+                                "value": "1"
+                            }
+                        },
+                        "name": "id",
+                        "description": "id of game to be deleted",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "examples": {
+                                    "Example of a game": {
+                                        "value": [
+                                            {
+                                                "error": "Game not found"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successfuly deleted game"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                },
+                                "examples": {
+                                    "Missing paramaters": {
+                                        "value": [
+                                            {
+                                                "error": "One or multible parameters are missing"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "when missing one or multible paramaters"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/error"
+                                },
+                                "examples": {
+                                    "Game not found": {
+                                        "value": [
+                                            {
+                                                "error": "Game not found"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "the game to be deleted is not found in the array"
+                    }
+                },
+                "operationId": "Delete ID",
+                "summary": "Deletes game by id",
+                "description": "Finds the given id and deletes the matching game"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "description": "",
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        }
+    },
+    "components": {
+        "schemas": {
+            "error": {
+                "title": "Root Type for error",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "error": "Error message."
+                }
+            },
+            "Game": {
+                "title": "Root Type for Game",
+                "description": "Example of a submittable game",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "name": "Minecraft"
+                }
+            }
+        }
+    }
+}

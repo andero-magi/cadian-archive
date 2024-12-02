@@ -1,0 +1,25 @@
+openapi: 3.0.2
+info:
+    title: New API
+    version: 1.0.0
+    description: A brand new API with no content.  Go nuts!
+paths:
+    /games:
+        get:
+            tags:
+                - games
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                List of games:
+                                    value: "    {id: 1, name: \"Game 1\" },\r\n    {id: 2, name: \"Game 2\" },\r\n    {id: 3, name: \"Game 3\" }"
+                    description: return a list of games
+            summary: get list of all games from api
+            description: |
+                returns list of all games in the api throught the requesting user
