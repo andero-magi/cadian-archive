@@ -14,7 +14,6 @@ class TagsParser {
   #cursor = 0
 
   constructor(input) {
-    
     this.#input = input ?? ""
     this.#cursor = 0
   }
