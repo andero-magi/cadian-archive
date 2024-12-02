@@ -5,70 +5,24 @@ const swaggerUI  = require('swagger-ui-express')
 const swaggerDoc = require('./docs/swagger.json')
 const yup        = require("yup")
 const UUID       = require("uuid")
+const PostsService = require("./post-service")
+const ImagesService = require("./image-service")
+const TagService = require("./tag-service")
 
 const app = express()
-
-// Post service, replace with DB later
-class PostsService {
-  #posts = {}
-
-  constructor() {
-
-  }
-
-  async listPosts() {
-    let arr = []
-    for (let key in this.#posts) {
-      arr.push(this.#posts[key])
-    }
-    return arr
-  }
-
-  async getPostById(id) {
-    return this.#posts[id]
-  }
-
-  async modifyPost(id, postData) {
-    let post = {
-      id: id,
-      content: postData.content,
-      author_id: postData.author_id,
-      tags: postData.tags
-    }
-
-    this.#posts[id] = postData
-    return post
-  }
-
-  async createPost(postData) {
-    let post = {
-      id: UUID.v7(),
-      content: postData.content,
-      author_id: postData.author_id,
-      tags: postData.tags
-    }
-
-    this.#posts[post.id] = post
-    return post
-  }
-
-  async deletePost(postId) {
-    delete this.#posts[postId]
-  }
-}
-
 
 // Define post schemas
 const shape = yup.object().shape({
   tags: yup.array().of(yup.string()).required(),
   author_id: yup.number().required(),
   content: yup.array().of(yup.object().shape({
-    type: yup.string().oneOf(['image', 'paragrapth', 'header', 'title']),
+    type: yup.string().oneOf(['imageref', 'imagedata', 'section', 'header', 'title']),
     data: yup.string()
   }))
 })
 
 const posts = new PostsService()
+const images = new ImagesService()
 
 // Create test posts
 createTests()
@@ -88,6 +42,8 @@ app.post("/posts", async (req, res) => {
   if (j == null) {
     return
   }
+
+  await processImages(j)
 
   let created = await posts.createPost(j)
   res.status(201).send(created)
@@ -155,6 +111,22 @@ app.delete("/posts/:id", async (req, res) => {
   res.status(200).send()
 })
 
+// Get images stored by the images service
+app.get("/images/:id", async (req, res) => {
+  let id = getIdParam(req, res)
+  if (id == null) {
+    return
+  }
+
+  let imgData = await images.findImage(id)
+  if (imgData == null) {
+    res.status(404).send({error: `Image with ID ${id} not found`})
+  }
+
+  res.contentType = "image/jpeg"
+  return res.status(200).send(imgData)
+})
+
 // Start web server
 app.listen(port, () => console.log(`URL: http://localhost:${port}/docs`))
 
@@ -192,6 +164,27 @@ async function tryValidate(req, res) {
   }
 
   return j
+}
+
+/**
+ * Process 'imagedata' content values in the post data and upload
+ * them to the internal service, replacing the imagedata values
+ * with imagerefs.
+ * 
+ * @param {*} j Post data
+ */
+async function processImages(j) {
+  let contentArray = j.content
+  for (let i = 0; i < contentArray.length; i++) {
+    let c = contentArray[i]
+    if (c.type != 'imagedata') {
+      continue
+    }
+
+    let uploadedId = await images.uploadImage(c.data)
+    c.data = uploadedId
+    c.type = "imageref"
+  }
 }
 
 /**
