@@ -23,6 +23,11 @@ const shape = yup.object().shape({
 
 const posts = new PostsService()
 const images = new ImagesService()
+const tagService = new TagService()
+
+for (let i = 0; i < 100; i++) {
+  tagService.addTag(`Tag ${i}`)
+}
 
 // Create test posts
 createTests()
@@ -40,6 +45,9 @@ app.post("/posts", async (req, res) => {
   let j = await tryValidate(req, res)
 
   if (j == null) {
+    return
+  }
+  if (!(await validateTags(req, res, j))) {
     return
   }
 
@@ -64,6 +72,10 @@ app.put("/posts/:id", async (req, res) => {
   let existing = await posts.getPostById(id)
   if (existing == null) {
     res.status(404).send({error: `No post with ID ${id} found`})
+    return
+  }
+
+  if (!(await validateTags(req, res, j))) {
     return
   }
 
@@ -133,6 +145,29 @@ app.listen(port, () => console.log(`URL: http://localhost:${port}/docs`))
 // =============================================
 // - Helper functions
 // =============================================
+
+/**
+ * Validate all tags in the Post data provided.
+ * 
+ * @param {Request} req Request
+ * @param {Response} res Response 
+ * @param {*} j Post data
+ * 
+ * @returns True, if all tags are valid, False otherwise
+ */
+async function validateTags(req, res, j) {
+  let tags = j.tags
+  for (let i = 0; i < tags.length; i++) {
+    let tag = tags[i]
+
+    if (!(await tagService.validateTag(tag))) {
+      res.status(400).send({error: `Unknown or invalid tag ${tag}`})
+      return false
+    }
+  }
+
+  return true
+}
 
 /**
  * Attempt to validate the body of the request. If validated 
