@@ -6,6 +6,25 @@ class PostsService {
   constructor() {
   
   }
+
+  async searchPosts(searchExpr) {
+    let result = []
+
+    outer: for (let uuid in this.#posts) {
+      let post = this.#posts[uuid]
+
+      for (let expr of searchExpr) {
+        if (expr.testPost(post)) {
+          continue
+        }
+        continue outer
+      }
+
+      result.push(post)
+    }
+    
+    return result
+  }
   
   async listPosts() {
     let arr = []

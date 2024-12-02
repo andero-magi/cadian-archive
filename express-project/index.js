@@ -8,6 +8,7 @@ const UUID       = require("uuid")
 const PostsService = require("./post-service")
 const ImagesService = require("./image-service")
 const TagService = require("./tag-service")
+const tagsParser = require("./tags-parser")
 
 const app = express()
 
@@ -85,7 +86,18 @@ app.put("/posts/:id", async (req, res) => {
 
 // Get all posts
 app.get("/posts", async (req, res) => {
-  res.status(200).send(await posts.listPosts())
+  let search = req.query['search'] ?? ''
+
+  if (search == '') {
+    res.status(400).send({error: "No search"})
+    return
+  }
+
+  let searchExpr = tagsParser.parseTags(search)
+  console.log(search)
+  console.log(searchExpr)
+  
+  res.status(200).send(await posts.searchPosts(searchExpr))
 })
 
 // Get specific post

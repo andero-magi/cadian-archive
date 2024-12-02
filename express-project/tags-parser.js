@@ -1,12 +1,21 @@
 class TagSearch {
   tagName = ''
   negated = false
+
+  testPost(post) {
+    let found = post.tags.includes(this.tagName)
+    return found != this.negated
+  }
 }
 
 class FieldSearch {
   fieldName = ''
   fieldValue = ''
   negated = false
+
+  testPost(post) {
+    return true
+  }
 }
 
 class TagsParser {
@@ -116,31 +125,13 @@ class TagsParser {
   }
 }
 
+module.exports = {
+  TagSearch: TagSearch,
+  FieldSearch: FieldSearch,
+  TagsParser: TagsParser,
 
-main()
-
-function main() {
-  let tagStr = "tag1 !tag2 -tag3 't1 t2' t:t2"
-
-  if (process.argv.length > 2) {
-    tagStr = ''
-
-    for (let i = 2; i < process.argv.length; i++) {
-      if (i != 2) {
-        tagStr += " "
-      }
-
-      tagStr += process.argv[i]
-    }
+  parseTags: (input) => {
+    let p = new TagsParser(input)
+    return p.parse()
   }
-
-  console.log(`Original string: ${tagStr}`)
-
-  let tags = parseTags(tagStr)
-  console.log(tags)
-}
-
-function parseTags(input) {
-  let p = new TagsParser(input)
-  return p.parse()
 }

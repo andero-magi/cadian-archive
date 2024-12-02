@@ -1,305 +1,342 @@
 {
-    "openapi": "3.0.1",
-    "info": {
+  "openapi": "3.0.1",
+  "info": {
       "title": "CadianArchive",
       "version": "1.0"
-    },
-    "paths": {
+  },
+  "paths": {
       "/posts": {
-        "get": {
-          "tags": [
-            "Posts"
-          ],
-          "summary": "Query Posts",
-          "parameters": [
-            {
-              "name": "search",
-              "in": "query",
-              "description": "Post search",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Success",
-              "content": {
-                "text/plain": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/Post"
-                    }
+          "get": {
+              "tags": [
+                  "Posts"
+              ],
+              "parameters": [
+                  {
+                      "examples": {
+                          "Search with multiple tags and exclusions": {
+                              "value": "tag1 tag2 tag3:search !excluded_tag"
+                          }
+                      },
+                      "name": "search",
+                      "description": "Post search",
+                      "schema": {
+                          "type": "string"
+                      },
+                      "in": "query",
+                      "required": true
                   }
-                },
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/Post"
-                    }
+              ],
+              "responses": {
+                  "200": {
+                      "content": {
+                          "text/plain": {
+                              "schema": {
+                                  "type": "array",
+                                  "items": {
+                                      "$ref": "#/components/schemas/Post"
+                                  }
+                              }
+                          },
+                          "application/json": {
+                              "schema": {
+                                  "type": "array",
+                                  "items": {
+                                      "$ref": "#/components/schemas/Post"
+                                  }
+                              }
+                          },
+                          "text/json": {
+                              "schema": {
+                                  "type": "array",
+                                  "items": {
+                                      "$ref": "#/components/schemas/Post"
+                                  }
+                              }
+                          }
+                      },
+                      "description": "Success"
                   }
-                },
-                "text/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/Post"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "post": {
-          "tags": [
-            "Posts"
-          ],
-          "summary": "Create a new post",
-          "requestBody": {
-            "description": "Post Data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
               },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              },
-              "application/*+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              }
-            }
+              "summary": "Query Posts"
           },
-          "responses": {
-            "201": {
-              "description": "Created",
-              "content": {
-                "text/plain": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Post"
+          "post": {
+              "requestBody": {
+                  "description": "Post Data",
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/Post"
+                          }
+                      },
+                      "text/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/Post"
+                          }
+                      },
+                      "application/*+json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/Post"
+                          }
+                      }
                   }
-                },
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Post"
+              },
+              "tags": [
+                  "Posts"
+              ],
+              "responses": {
+                  "201": {
+                      "content": {
+                          "text/plain": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Post"
+                              }
+                          },
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Post"
+                              }
+                          },
+                          "text/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Post"
+                              }
+                          }
+                      },
+                      "description": "Created"
+                  },
+                  "400": {
+                      "content": {
+                          "text/plain": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          },
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          },
+                          "text/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          }
+                      },
+                      "description": "Bad Request"
                   }
-                },
-                "text/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Post"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "Bad Request",
-              "content": {
-                "text/plain": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
-                  }
-                },
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
-                  }
-                },
-                "text/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
-                  }
-                }
-              }
-            }
+              },
+              "summary": "Create a new post"
           }
-        }
       },
       "/posts/{id}": {
-        "get": {
-          "tags": [
-            "Posts"
-          ],
-          "summary": "Get a post by its UUID",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "description": "Post ID",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "uuid"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Success",
-              "content": {
-                "text/plain": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Post"
+          "get": {
+              "tags": [
+                  "Posts"
+              ],
+              "parameters": [
+                  {
+                      "name": "id",
+                      "description": "Post ID",
+                      "schema": {
+                          "format": "uuid",
+                          "type": "string"
+                      },
+                      "in": "path",
+                      "required": true
                   }
-                },
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Post"
+              ],
+              "responses": {
+                  "200": {
+                      "content": {
+                          "text/plain": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Post"
+                              }
+                          },
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Post"
+                              }
+                          },
+                          "text/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Post"
+                              }
+                          }
+                      },
+                      "description": "Success"
+                  },
+                  "404": {
+                      "content": {
+                          "text/plain": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          },
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          },
+                          "text/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          }
+                      },
+                      "description": "Not Found"
                   }
-                },
-                "text/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Post"
-                  }
-                }
-              }
-            },
-            "404": {
-              "description": "Not Found",
-              "content": {
-                "text/plain": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
-                  }
-                },
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
-                  }
-                },
-                "text/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "put": {
-          "tags": [
-            "Posts"
-          ],
-          "summary": "Update a post",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "description": "UUID of the post to update",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "uuid"
-              }
-            }
-          ],
-          "requestBody": {
-            "description": "New Post data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
               },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              },
-              "application/*+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Post"
-                }
-              }
-            }
+              "summary": "Get a post by its UUID"
           },
-          "responses": {
-            "200": {
-              "description": "Success"
-            }
+          "put": {
+              "requestBody": {
+                  "description": "New Post data",
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/Post"
+                          }
+                      },
+                      "text/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/Post"
+                          }
+                      },
+                      "application/*+json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/Post"
+                          }
+                      }
+                  }
+              },
+              "tags": [
+                  "Posts"
+              ],
+              "parameters": [
+                  {
+                      "name": "id",
+                      "description": "UUID of the post to update",
+                      "schema": {
+                          "format": "uuid",
+                          "type": "string"
+                      },
+                      "in": "path",
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Success"
+                  }
+              },
+              "summary": "Update a post"
+          },
+          "delete": {
+              "tags": [
+                  "Posts"
+              ],
+              "parameters": [
+                  {
+                      "name": "id",
+                      "description": "UUID of the post to delete.",
+                      "schema": {
+                          "format": "uuid",
+                          "type": "string"
+                      },
+                      "in": "path",
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "202": {
+                      "description": "Accepted"
+                  },
+                  "404": {
+                      "content": {
+                          "text/plain": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          },
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          },
+                          "text/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/ErrorResult"
+                              }
+                          }
+                      },
+                      "description": "Not Found"
+                  }
+              },
+              "summary": "Deletes a post by it's UUID"
           }
-        },
-        "delete": {
-          "tags": [
-            "Posts"
-          ],
-          "summary": "Deletes a post by it's UUID",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "description": "UUID of the post to delete.",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "uuid"
-              }
-            }
-          ],
-          "responses": {
-            "404": {
-              "description": "Not Found",
-              "content": {
-                "text/plain": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
+      },
+      "/users": {
+          "post": {
+              "requestBody": {
+                  "content": {
+                      "application/json": {}
                   }
-                },
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
+              },
+              "tags": [
+                  "Users"
+              ],
+              "responses": {
+                  "201": {
+                      "content": {
+                          "application/json": {}
+                      },
+                      "description": "Account created"
+                  },
+                  "400": {
+                      "content": {
+                          "application/json": {}
+                      },
+                      "description": "Failed to create account"
                   }
-                },
-                "text/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorResult"
-                  }
-                }
-              }
-            },
-            "202": {
-              "description": "Accepted"
-            }
+              },
+              "operationId": "Create user",
+              "summary": "Create new user"
           }
-        }
-      }
-    },
-    "components": {
+      },
+      "/users{id}": {}
+  },
+  "components": {
       "schemas": {
-        "Post": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "content": {
-              "type": "string"
-            },
-            "tags": {
-              "type": "array",
-              "items": {"type": "string"}
-            }
+          "Post": {
+              "type": "object",
+              "properties": {
+                  "id": {
+                      "format": "uuid",
+                      "type": "string"
+                  },
+                  "content": {
+                      "type": "string"
+                  },
+                  "tags": {
+                      "type": "array",
+                      "items": {
+                          "type": "string"
+                      }
+                  }
+              },
+              "additionalProperties": false
           },
-          "additionalProperties": false
-        },
-        "ErrorResult": {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string",
-              "nullable": true
-            }
-          },
-          "additionalProperties": false
-        }
+          "ErrorResult": {
+              "type": "object",
+              "properties": {
+                  "error": {
+                      "nullable": true,
+                      "type": "string"
+                  }
+              },
+              "additionalProperties": false
+          }
       }
-    }
   }
+}
