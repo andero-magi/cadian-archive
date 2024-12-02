@@ -279,3 +279,27 @@ function getBaseUrl(req) {
   return (req.connection && req.connection.encrypted
     ? "https" : "http") + `://${req.headers.host}`
 }
+
+
+
+/**KERDO ABOMINATION **/
+
+/*
+*Post
+*Create account/ return 201 and 400
+*/
+
+app.post("/users", (req,res) => {
+  if (!req.body.username ||!req.body.password || !req.body.email)  {
+    return res.status(400).send({error: "Invalid user data"});  
+  }
+  let user = {
+    username: req.body.username,
+    password: req.body.password,
+    email: req.body.email
+  }
+  users.push(user);
+  res.status(201).send(user);
+})
+  
+let users = [];
