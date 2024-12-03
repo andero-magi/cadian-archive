@@ -1,5 +1,9 @@
 const UUID       = require("uuid")
 
+function dateTimeNow() {
+  return new Date()
+}
+
 class PostsService {
   #posts = {}
   
@@ -22,8 +26,27 @@ class PostsService {
 
       result.push(post)
     }
+
+    let sortTag = this.findSortTag(searchExpr)
+    if (sortTag) {
+      let sortType = sortTag.fieldValue
+
+      if (sortType == 'modified') {
+        this.sortBy(result, p => p.modified_date)
+      } else if (sortType == 'date' || sortType == 'upload') {
+        this.sortBy(result, p => p.upload_date)
+      }
+    }
     
     return result
+  }
+
+  sortBy(arr, getter) {
+    return arr.sort((a, b) => getter(b).getTime() - getter(a).getTime())
+  }
+
+  findSortTag(searchExpr) {
+    return searchExpr.find((v) => v.fieldName == "sort" || v.fieldName == "order")
   }
   
   async listPosts() {
@@ -39,23 +62,35 @@ class PostsService {
   }
   
   async modifyPost(id, postData) {
+    let existing = await this.getPostById(id)
+
     let post = {
       id: id,
+
       content: postData.content,
       author_id: postData.author_id,
-      tags: postData.tags
+
+      tags: postData.tags,
+
+      upload_date: existing?.upload_date,
+      modified_date: dateTimeNow()
     }
   
-    this.#posts[id] = postData
+    this.#posts[id] = post
     return post
   }
   
   async createPost(postData) {
     let post = {
       id: UUID.v7(),
+
       content: postData.content,
       author_id: postData.author_id,
-      tags: postData.tags
+
+      tags: postData.tags,
+
+      modified_date: dateTimeNow(),
+      upload_date: dateTimeNow()
     }
   
     this.#posts[post.id] = post
