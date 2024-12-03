@@ -423,7 +423,7 @@
                         },
                         "description": "Wrong user data, update failed"
                     },
-                    "401": {
+                    "404": {
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -431,12 +431,16 @@
                                 },
                                 "examples": {
                                     "Example of error": {
-                                        "value": "\n    {\n        \"error\": \"Tried to change someone elses account\"\n    }\n"
+                                        "value": [
+                                            {
+                                                "error": "This id does not exist"
+                                            }
+                                        ]
                                     }
                                 }
                             }
                         },
-                        "description": "Update failed, not your account"
+                        "description": "Id does not exist in the db"
                     }
                 },
                 "summary": "Update accounts data"

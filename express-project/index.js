@@ -316,8 +316,15 @@ app.post("/users", (req,res) => {
 let mock = userService.createUser();
 
 app.put("/users/:id", (req,res) => {
+
   if (req.params.id == null) {
     return res.status(400).send({error: "Invalid user ID"});  
+  }
+
+  let id = req.params.id;
+  let existingUser = userService.getUserById(id);
+  if (!existingUser) {
+    return res.status(404).send({error: "Id does not exist"});
   }
 
   if (!req.body.username ||!req.body.password || !req.body.email)  {

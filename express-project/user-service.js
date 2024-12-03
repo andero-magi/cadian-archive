@@ -14,8 +14,8 @@ constructor(){
         return UUID.v7();
     }
 
-    getUserByName(username) {
-        return this.#users[username];
+    getUserById(id) {
+        return this.#users[id];
     }
 
 
