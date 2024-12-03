@@ -1,412 +1,504 @@
 {
-  "openapi": "3.0.1",
-  "info": {
-      "title": "CadianArchive",
-      "version": "1.0"
-  },
-  "paths": {
-      "/posts": {
-          "get": {
-              "tags": [
-                  "Posts"
-              ],
-              "parameters": [
-                  {
-                      "examples": {
-                          "Search with multiple tags and exclusions": {
-                              "value": "tag1 tag2 tag3:search !excluded_tag"
-                          }
-                      },
-                      "name": "search",
-                      "description": "Post search",
-                      "schema": {
-                          "type": "string"
-                      },
-                      "in": "query",
-                      "required": true
-                  }
-              ],
-              "responses": {
-                  "200": {
-                      "content": {
-                          "text/plain": {
-                              "schema": {
-                                  "type": "array",
-                                  "items": {
-                                      "$ref": "#/components/schemas/Post"
-                                  }
-                              }
-                          },
-                          "application/json": {
-                              "schema": {
-                                  "type": "array",
-                                  "items": {
-                                      "$ref": "#/components/schemas/Post"
-                                  }
-                              }
-                          },
-                          "text/json": {
-                              "schema": {
-                                  "type": "array",
-                                  "items": {
-                                      "$ref": "#/components/schemas/Post"
-                                  }
-                              }
-                          }
-                      },
-                      "description": "Success"
-                  }
-              },
-              "summary": "Query Posts"
-          },
-          "post": {
-              "requestBody": {
-                  "description": "Post Data",
-                  "content": {
-                      "application/json": {
-                          "schema": {
-                              "$ref": "#/components/schemas/Post"
-                          }
-                      },
-                      "text/json": {
-                          "schema": {
-                              "$ref": "#/components/schemas/Post"
-                          }
-                      },
-                      "application/*+json": {
-                          "schema": {
-                              "$ref": "#/components/schemas/Post"
-                          }
-                      }
-                  }
-              },
-              "tags": [
-                  "Posts"
-              ],
-              "responses": {
-                  "201": {
-                      "content": {
-                          "text/plain": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/Post"
-                              }
-                          },
-                          "application/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/Post"
-                              }
-                          },
-                          "text/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/Post"
-                              }
-                          }
-                      },
-                      "description": "Created"
-                  },
-                  "400": {
-                      "content": {
-                          "text/plain": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          },
-                          "application/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          },
-                          "text/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          }
-                      },
-                      "description": "Bad Request"
-                  }
-              },
-              "summary": "Create a new post"
-          }
-      },
-      "/posts/{id}": {
-          "get": {
-              "tags": [
-                  "Posts"
-              ],
-              "parameters": [
-                  {
-                      "name": "id",
-                      "description": "Post ID",
-                      "schema": {
-                          "format": "uuid",
-                          "type": "string"
-                      },
-                      "in": "path",
-                      "required": true
-                  }
-              ],
-              "responses": {
-                  "200": {
-                      "content": {
-                          "text/plain": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/Post"
-                              }
-                          },
-                          "application/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/Post"
-                              }
-                          },
-                          "text/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/Post"
-                              }
-                          }
-                      },
-                      "description": "Success"
-                  },
-                  "404": {
-                      "content": {
-                          "text/plain": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          },
-                          "application/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          },
-                          "text/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          }
-                      },
-                      "description": "Not Found"
-                  }
-              },
-              "summary": "Get a post by its UUID"
-          },
-          "put": {
-              "requestBody": {
-                  "description": "New Post data",
-                  "content": {
-                      "application/json": {
-                          "schema": {
-                              "$ref": "#/components/schemas/Post"
-                          }
-                      },
-                      "text/json": {
-                          "schema": {
-                              "$ref": "#/components/schemas/Post"
-                          }
-                      },
-                      "application/*+json": {
-                          "schema": {
-                              "$ref": "#/components/schemas/Post"
-                          }
-                      }
-                  }
-              },
-              "tags": [
-                  "Posts"
-              ],
-              "parameters": [
-                  {
-                      "name": "id",
-                      "description": "UUID of the post to update",
-                      "schema": {
-                          "format": "uuid",
-                          "type": "string"
-                      },
-                      "in": "path",
-                      "required": true
-                  }
-              ],
-              "responses": {
-                  "200": {
-                      "description": "Success"
-                  }
-              },
-              "summary": "Update a post"
-          },
-          "delete": {
-              "tags": [
-                  "Posts"
-              ],
-              "parameters": [
-                  {
-                      "name": "id",
-                      "description": "UUID of the post to delete.",
-                      "schema": {
-                          "format": "uuid",
-                          "type": "string"
-                      },
-                      "in": "path",
-                      "required": true
-                  }
-              ],
-              "responses": {
-                  "202": {
-                      "description": "Accepted"
-                  },
-                  "404": {
-                      "content": {
-                          "text/plain": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          },
-                          "application/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          },
-                          "text/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              }
-                          }
-                      },
-                      "description": "Not Found"
-                  }
-              },
-              "summary": "Deletes a post by it's UUID"
-          }
-      },
-      "/users": {
-          "post": {
-              "requestBody": {
-                  "content": {
-                      "application/json": {
-                          "schema": {
-                              "$ref": "#/components/schemas/User"
-                          },
-                          "examples": {
-                              "User example": {
-                                  "value": [
-                                      {
-                                          "username": "officialdonaldtusk",
-                                          "password": "notagermanspy",
-                                          "email": "donaldtusk@gmail.com",
-                                          "profilepicid": "8p.jpg"
-                                      }
-                                  ]
-                              }
-                          }
-                      }
-                  }
-              },
-              "tags": [
-                  "Users"
-              ],
-              "responses": {
-                  "201": {
-                      "content": {
-                          "application/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/User"
-                              },
-                              "examples": {
-                                  "Example of user": {
-                                      "value": [
-                                          {
-                                              "username": "dave",
-                                              "password": "pin",
-                                              "email": "k",
-                                              "profilepicid": "d"
-                                          }
-                                      ]
-                                  }
-                              }
-                          }
-                      },
-                      "description": "Account created"
-                  },
-                  "400": {
-                      "content": {
-                          "application/json": {
-                              "schema": {
-                                  "$ref": "#/components/schemas/ErrorResult"
-                              },
-                              "examples": {
-                                  "Example of failure to create account": {
-                                      "value": [
-                                          {
-                                              "error": "Failed to create account"
-                                          }
-                                      ]
-                                  }
-                              }
-                          }
-                      },
-                      "description": "Failed to create account"
-                  }
-              },
-              "operationId": "Create user",
-              "summary": "Create new user"
-          }
-      },
-      "/users{id}": {}
-  },
-  "components": {
-      "schemas": {
-          "Post": {
-              "type": "object",
-              "properties": {
-                  "id": {
-                      "format": "uuid",
-                      "type": "string"
-                  },
-                  "content": {
-                      "type": "string"
-                  },
-                  "tags": {
-                      "type": "array",
-                      "items": {
-                          "type": "string"
-                      }
-                  }
-              },
-              "additionalProperties": false
-          },
-          "ErrorResult": {
-              "type": "object",
-              "properties": {
-                  "error": {
-                      "nullable": true,
-                      "type": "string"
-                  }
-              },
-              "additionalProperties": false
-          },
-          "User": {
-              "title": "Root Type for User",
-              "description": "",
-              "type": "object",
-              "properties": {
-                  "username": {
-                      "type": "string"
-                  },
-                  "password": {
-                      "type": "string"
-                  },
-                  "email": {
-                      "type": "string"
-                  },
-                  "profilepicid": {
-                      "type": "string"
-                  }
-              },
-              "example": {
-                  "username": "ezequiel",
-                  "password": "fukuman",
-                  "email": "kerdovahk@gmail.com",
-                  "profilepicid": "gsadhsjsdlk.jpg"
-              }
-          }
-      }
-  }
+    "openapi": "3.0.1",
+    "info": {
+        "title": "CadianArchive",
+        "version": "1.0"
+    },
+    "paths": {
+        "/posts": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "parameters": [
+                    {
+                        "examples": {
+                            "Search with multiple tags and exclusions": {
+                                "value": "tag1 tag2 tag3:search !excluded_tag"
+                            }
+                        },
+                        "name": "search",
+                        "description": "Post search",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Post"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Post"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Post"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Success"
+                    }
+                },
+                "summary": "Query Posts"
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Post Data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Post"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Post"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Post"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Posts"
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            }
+                        },
+                        "description": "Created"
+                    },
+                    "400": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    }
+                },
+                "summary": "Create a new post"
+            }
+        },
+        "/posts/{id}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Post ID",
+                        "schema": {
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Post"
+                                }
+                            }
+                        },
+                        "description": "Success"
+                    },
+                    "404": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    }
+                },
+                "summary": "Get a post by its UUID"
+            },
+            "put": {
+                "requestBody": {
+                    "description": "New Post data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Post"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Post"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Post"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Posts"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "UUID of the post to update",
+                        "schema": {
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Update a post"
+            },
+            "delete": {
+                "tags": [
+                    "Posts"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "UUID of the post to delete.",
+                        "schema": {
+                            "format": "uuid",
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted"
+                    },
+                    "404": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    }
+                },
+                "summary": "Deletes a post by it's UUID"
+            }
+        },
+        "/users": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "User example": {
+                                    "value": {
+                                        "username": "officialdonaldtusk",
+                                        "password": "notagermanspy",
+                                        "email": "donaldtusk@gmail.com",
+                                        "profilepicid": "8p.jpg"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Users"
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "examples": {
+                                    "Example of user": {
+                                        "value": [
+                                            {
+                                                "username": "dave",
+                                                "password": "pin",
+                                                "email": "k",
+                                                "profilepicid": "d"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Account created"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                },
+                                "examples": {
+                                    "Example of failure to create account": {
+                                        "value": [
+                                            {
+                                                "error": "Failed to create account"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Failed to create account"
+                    }
+                },
+                "operationId": "Create user",
+                "summary": "Create new user"
+            }
+        },
+        "/users/{id}": {
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            },
+                            "examples": {
+                                "Example of user": {
+                                    "value": {
+                                        "id": "01938b7d-e200-72c5-9009-6887e02d2338",
+                                        "username": "officialdonaldtusk",
+                                        "password": "notagermanspy",
+                                        "email": "donaldtusk@gmail.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "examples": {
+                            "Example of user ID": {
+                                "value": "01938b7d-e200-72c5-9009-6887e02d2338"
+                            }
+                        },
+                        "name": "id",
+                        "description": "User ID",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "examples": {
+                                    "Example of updated user": {
+                                        "value": {
+                                            "username": "xxx_Loaf_Of_Bread_XD_xxx",
+                                            "password": "ya61d",
+                                            "email": "3k",
+                                            "profilepicid": "dshahsad.jpg"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Update successful"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                },
+                                "examples": {
+                                    "Example of error": {
+                                        "value": "\n    {\n        \"error\": \"j3p56roj7\"\n    }\n"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Wrong user data, update failed"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                },
+                                "examples": {
+                                    "Example of error": {
+                                        "value": "\n    {\n        \"error\": \"Tried to change someone elses account\"\n    }\n"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Update failed, not your account"
+                    }
+                },
+                "summary": "Update accounts data"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Post": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "format": "uuid",
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ErrorResult": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "nullable": true,
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "User": {
+                "title": "Root Type for User",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "profilepicid": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "username": "ezequiel",
+                    "password": "fukuman",
+                    "email": "kerdovahk@gmail.com",
+                    "profilepicid": "gsadhsjsdlk.jpg"
+                }
+            }
+        }
+    }
 }

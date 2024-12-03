@@ -8,6 +8,7 @@ const UUID       = require("uuid")
 const PostsService = require("./post-service")
 const ImagesService = require("./image-service")
 const TagService = require("./tag-service")
+const UserService = require('./user-service')
 
 const app = express()
 
@@ -289,11 +290,14 @@ function getBaseUrl(req) {
 *Create account/ return 201 and 400
 */
 
+const userService = new UserService
+
 app.post("/users", (req,res) => {
   if (!req.body.username ||!req.body.password || !req.body.email)  {
     return res.status(400).send({error: "Invalid user data"});  
   }
   let user = {
+    id: userService.generateUserId(),
     username: req.body.username,
     password: req.body.password,
     email: req.body.email
@@ -302,4 +306,28 @@ app.post("/users", (req,res) => {
   res.status(201).send(user);
 })
   
-let users = [];
+/*let users = [];
+
+/*
+*PUT
+*Update user info (200, 400, 401)
+*/
+
+let mock = userService.createUser();
+
+app.put("/users/:id", (req,res) => {
+  if (req.params.id == null) {
+    return res.status(400).send({error: "Invalid user ID"});  
+  }
+
+  if (!req.body.username ||!req.body.password || !req.body.email)  {
+    return res.status(400).send({error: "Invalid user data"});
+  }  
+
+    let user = userService.modifyUser(req.params.id, req.body.username, req.body.password)
+    
+    res.status(200).send(user);
+  });
+
+
+
