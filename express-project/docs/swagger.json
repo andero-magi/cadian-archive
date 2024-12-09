@@ -348,6 +348,71 @@
             }
         },
         "/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "examples": {
+                            "Example of Id": {
+                                "value": "01938b7d-e200-72c5-9009-6887e02d2338"
+                            }
+                        },
+                        "name": "id",
+                        "description": "User id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "examples": {
+                                    "User example": {
+                                        "value": [
+                                            {
+                                                "username": "pe",
+                                                "password": "obamna",
+                                                "email": "upd@gmail.com",
+                                                "profilepicid": "l.jpg"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Got user"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                },
+                                "examples": {
+                                    "Example of error": {
+                                        "value": [
+                                            {
+                                                "error": "User not found"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "User not found"
+                    }
+                },
+                "summary": "Get user by Id"
+            },
             "put": {
                 "requestBody": {
                     "content": {

@@ -336,5 +336,18 @@ app.put("/users/:id", (req,res) => {
     res.status(200).send(user);
   });
 
+app.get("/users/:id", (req, res) => {
+  
+  if (req.params.id == null){
+    return
+  }
+
+  let user = userService.getUserById(req.params.id);
+  if (user == null){
+    res.status(404).send({error: `User with this ${req.params.id} doesnt exist`});
+    return
+  }
+  return res.status(200).send(user);
+})
 
 
