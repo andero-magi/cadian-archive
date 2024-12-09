@@ -1,6 +1,6 @@
-const port = 8080
+require("dotenv").config()
 
-const express    = require('express')
+const express = require('express')
 const swaggerUI  = require('swagger-ui-express')
 const swaggerDoc = require('./docs/swagger.json')
 const yup        = require("yup")
@@ -9,6 +9,7 @@ const PostsService = require("./post-service")
 const ImagesService = require("./image-service")
 const TagService = require("./tag-service")
 const tagsParser = require("./tags-parser")
+const database = require("./db-service")
 
 const app = express()
 
@@ -151,8 +152,11 @@ app.get("/images/:id", async (req, res) => {
   return res.status(200).send(imgData)
 })
 
+const port = process.env.PORT ?? 8080
+const host = process.env.HOST ?? "localhost"
+
 // Start web server
-app.listen(port, () => console.log(`URL: http://localhost:${port}/docs`))
+app.listen(port, () => console.log(`URL: http://${host}:${port}/docs`))
 
 // =============================================
 // - Helper functions

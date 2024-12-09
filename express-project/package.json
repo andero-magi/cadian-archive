@@ -3,8 +3,11 @@
     "start": "npx nodemon ."
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^4.21.1",
+    "mariadb": "^3.4.0",
     "nodemon": "^3.1.7",
+    "sequelize": "^6.37.5",
     "swagger-ui": "^5.18.2",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.3",

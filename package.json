@@ -1,0 +1,16 @@
+{
+  "name": "cadian-archive",
+  "version": "1.0.0",
+  "description": "https://trello.com/b/zZcahUbL/cadian-archives-api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "concurrently \"cd express-project && npm run start\" \"cd frontend && npm run dev\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
