@@ -1,47 +1,24 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+  import topbar from "./components/topbar.vue"
+  import leftsidebar from "./components/leftsidebar.vue"
+  import PageContent from "./components/PageContent.vue"
+  import PostTags from "./components/PostTags.vue"
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <topbar />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="d-flex align-items-start w-100">
+    <leftsidebar />
+
+    <div class="d-flex justify-content-center" style="width: 100%;">
+      <PageContent />
     </div>
-  </header>
 
-  <main>
-    <TheWelcome />
-  </main>
+    <PostTags />
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>
