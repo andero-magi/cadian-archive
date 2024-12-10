@@ -336,6 +336,10 @@ app.put("/users/:id", (req,res) => {
     res.status(200).send(user);
   });
 
+/*
+*GET
+*Get user by ID (200, 404)
+*/
 app.get("/users/:id", (req, res) => {
   
   if (req.params.id == null){
@@ -348,6 +352,27 @@ app.get("/users/:id", (req, res) => {
     return
   }
   return res.status(200).send(user);
+})
+
+/*
+*DELETE USER BY ID
+*RETURN 200/404
+*/
+
+app.delete("/users/:id", async (req, res) => {
+  if (req.params.id == null){
+    return 
+  }
+  
+  let id = req.params.id
+  let user = await userService.getUserById(id);
+  if (user == null){
+    res.status(404).send({error: `User with this ${req.params.id} doesnt exist`});
+    return
+  }
+
+  await users.deleteUser(id)
+  res.status(200).send()
 })
 
 

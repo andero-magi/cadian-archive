@@ -45,6 +45,14 @@ modifyUser(id,username, password, email){
         this.#users[user.id] = user;
         return user;
     }
+
+deleteUser(id,username,password){
+    if (this.#users[id] && this.#users[id].username === username && this.#users[id].password === password) {
+        delete this.#users[id];
+        return true;
+    }
+    return false;
+}
 }
 
 

@@ -509,6 +509,53 @@
                     }
                 },
                 "summary": "Update accounts data"
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "examples": {
+                            "Example of Id": {
+                                "value": "01938b7d-e200-72c5-9009-6887e02d2338"
+                            }
+                        },
+                        "name": "id",
+                        "description": "User Id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {}
+                        },
+                        "description": "User deleted by Id\n"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResult"
+                                },
+                                "examples": {
+                                    "Example of error": {
+                                        "value": {
+                                            "error": "Failed to deletee user by Id"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "User not deleted"
+                    }
+                },
+                "summary": "Delete user by Id"
             }
         }
     },
