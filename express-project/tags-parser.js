@@ -1,4 +1,4 @@
-class TagSearch {
+export class TagSearch {
   tagName = ''
   negated = false
 
@@ -8,7 +8,7 @@ class TagSearch {
   }
 }
 
-class FieldSearch {
+export class FieldSearch {
   fieldName = ''
   fieldValue = ''
   negated = false
@@ -18,7 +18,7 @@ class FieldSearch {
   }
 }
 
-class TagsParser {
+export class TagsParser {
   #input = ''
   #cursor = 0
 
@@ -125,13 +125,7 @@ class TagsParser {
   }
 }
 
-module.exports = {
-  TagSearch: TagSearch,
-  FieldSearch: FieldSearch,
-  TagsParser: TagsParser,
-
-  parseTags: (input) => {
-    let p = new TagsParser(input)
-    return p.parse()
-  }
+export function parseTags(input) {
+  let p = new TagsParser(input)
+  return p.parse()
 }

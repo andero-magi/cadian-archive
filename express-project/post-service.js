@@ -1,4 +1,4 @@
-const UUID = require("uuid")
+import { v7 } from "uuid"
 
 function dateTimeNow() {
   return new Date()
@@ -7,7 +7,7 @@ function dateTimeNow() {
 /**
  * Posts service, modifies, gets, queries and deletes posts.
  */
-class PostsService {
+export default class PostsService {
   #posts = {}
   
   constructor() {
@@ -105,7 +105,7 @@ class PostsService {
    */
   async createPost(postData) {
     let post = {
-      id: UUID.v7(),
+      id: v7(),
 
       content: postData.content,
       author_id: postData.author_id,
@@ -128,5 +128,3 @@ class PostsService {
     delete this.#posts[postId]
   }
 }
-
-module.exports = PostsService

@@ -1,4 +1,4 @@
-class TagService {
+export default class TagService {
   #tags = []
 
   constructor() {
@@ -13,5 +13,3 @@ class TagService {
     return this.#tags.includes(tag)
   }
 }
-
-module.exports = TagService

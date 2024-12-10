@@ -1,4 +1,4 @@
-const UUID = require('uuid')
+import { v7 } from 'uuid'
 
 class ImagesService {
   #images = {}
@@ -8,7 +8,7 @@ class ImagesService {
   }
 
   async uploadImage(imageData) {
-    let imgId = UUID.v7()
+    let imgId = v7()
     this.#images[imgId] = Buffer.from(imageData, 'base64')
     return imgId
   }
@@ -19,4 +19,4 @@ class ImagesService {
   }
 }
 
-module.exports = ImagesService
+export default ImagesService

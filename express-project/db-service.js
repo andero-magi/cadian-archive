@@ -1,11 +1,11 @@
-const ss = require("sequelize")
+import { Sequelize } from "sequelize"
 
 let dataName = process.env.DB_DATANAME
 let userName = process.env.DB_USERNAME
 let password = process.env.DB_PASSWORD
 let host = process.env.DB_HOSTNAME
 
-const sequelize = new ss.Sequelize(dataName, userName, password, {
+const sequelize = new Sequelize(dataName, userName, password, {
   host: host,
   dialect: process.env.DB_DIALECT ?? "mariadb",
   logging: console.log
@@ -24,15 +24,10 @@ async function authenticateDbConnection() {
 authenticateDbConnection()
 
 const db = {}
-db.Sequalize = ss.Sequelize
+db.Sequalize = Sequelize
 db.sequelize = sequelize
 
 async function sync() {
   await sequelize.sync({ alter: true })
   console.log("db synced")
-}
-
-module.exports = {
-  db: db,
-  sync: sync
 }

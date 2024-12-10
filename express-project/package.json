@@ -2,6 +2,7 @@
   "scripts": {
     "start": "npx nodemon ."
   },
+  "type": "module",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
