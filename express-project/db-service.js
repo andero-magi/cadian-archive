@@ -17,6 +17,7 @@ async function authenticateDbConnection() {
     console.log("Connected to DB")
   } catch (error) {
     console.error(`Database connection failed: ${error.original.code}`)
+    console.error(error)
   }
 }
 
