@@ -1,6 +1,7 @@
 require("dotenv").config()
 
-const express = require('express')
+const cors       = require("cors")
+const express    = require('express')
 const swaggerUI  = require('swagger-ui-express')
 const swaggerDoc = require('./docs/swagger.json')
 const yup        = require("yup")
@@ -39,6 +40,7 @@ createTests()
 // =============================================
 
 // App use calls
+app.use(cors())
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDoc))
 app.use(express.json())
 
