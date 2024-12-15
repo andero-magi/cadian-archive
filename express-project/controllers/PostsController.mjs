@@ -40,13 +40,14 @@ export class PostsController {
    */
   async searchPosts(req, res) {
     let search = req.query['search'] ?? ''
+    let searchExpr
   
     if (search == '') {
-      res.status(400).send({error: "No search"})
-      return
+      searchExpr = []
+    } else {
+      searchExpr = tagsParser.parseTags(search)
     }
-  
-    let searchExpr = tagsParser.parseTags(search)
+    
     res.status(200).send(await this.#posts.searchPosts(searchExpr))
   }
 
