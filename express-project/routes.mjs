@@ -1,11 +1,11 @@
-import { Express } from "express"
+import ex from "express"
 import { PostsController } from "./controllers/PostsController.mjs"
 import { AssetsController } from "./controllers/AssetController.mjs"
 
 /**
  * Register all app routes
  * 
- * @param {Express} app App to register routes to
+ * @param {ex.Express} app App to register routes to
  * @param {PostsController} posts Posts controller
  * @param {AssetsController} assets Assets controller
  */

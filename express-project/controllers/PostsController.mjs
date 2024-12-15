@@ -1,9 +1,9 @@
-import { Request, Response } from "express"
+import express from "express"
 import { getIdParam } from "../utils.mjs"
-import PostsService from "../post-service"
-import ImagesService from "../image-service"
-import TagService from "../tag-service"
-import tagsParser from "../tags-parser"
+import PostsService from "../post-service.js"
+import ImagesService from "../image-service.js"
+import TagService from "../tag-service.js"
+import * as tagsParser from "../tags-parser.js"
 import yup from "yup"
 
 // Define post schemas
@@ -35,8 +35,8 @@ export class PostsController {
   
   /**
    * 
-   * @param {Request} req 
-   * @param {Response} res 
+   * @param {express.Request} req 
+   * @param {express.Response} res 
    */
   async searchPosts(req, res) {
     let search = req.query['search'] ?? ''
@@ -52,8 +52,8 @@ export class PostsController {
 
   /**
    * 
-   * @param {Request} req 
-   * @param {Response} res 
+   * @param {express.Request} req 
+   * @param {express.Response} res 
    */
   async createPost(req, res) {
     let j = await tryValidate(req, res)
@@ -73,8 +73,8 @@ export class PostsController {
 
   /**
    * 
-   * @param {Request} req 
-   * @param {Response} res 
+   * @param {express.Request} req 
+   * @param {express.Response} res 
    */
   async deletePost(req, res) {
     let id = getIdParam(req, res)
@@ -95,8 +95,8 @@ export class PostsController {
 
   /**
    * 
-   * @param {Request} req 
-   * @param {Response} res 
+   * @param {express.Request} req 
+   * @param {express.Response} res 
    */
   async getPost(req, res) {
     let id = getIdParam(req, res)
@@ -116,8 +116,8 @@ export class PostsController {
 
   /**
    * 
-   * @param {Request} req 
-   * @param {Response} res 
+   * @param {express.Request} req 
+   * @param {express.Response} res 
    */
   async editPost(req, res) {
     let j = await tryValidate(req, res)
@@ -149,8 +149,8 @@ export class PostsController {
  * Validate all tags in the Post data provided.
  * 
  * @param {TagService} tagService 
- * @param {Request} req Request
- * @param {Response} res Response 
+ * @param {express.Request} req Request
+ * @param {express.Response} res Response 
  * @param {*} j Post data
  * 
  * @returns True, if all tags are valid, False otherwise
@@ -175,8 +175,8 @@ async function validateTags(tagService, req, res, j) {
  * successfully, the validated post is returned, otherwise, null
  * is returned and a 400 response sent.
  * 
- * @param {Request} req Request
- * @param {Response} res Response
+ * @param {express.Request} req Request
+ * @param {express.Response} res Response
  * 
  * @returns Validated request, or null
  */

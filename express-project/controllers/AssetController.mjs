@@ -1,5 +1,5 @@
-import { Request, Response } from "express"
-import ImagesService from "../image-service"
+import ex from "express"
+import ImagesService from "../image-service.js"
 
 export class AssetsController {
 
@@ -15,8 +15,8 @@ export class AssetsController {
 
   /**
    * Find an asset and return it
-   * @param {Request} req 
-   * @param {Response} res 
+   * @param {ex.Request} req 
+   * @param {ex.Response} res 
    */
   async findAsset(req, res) {
     let id = getIdParam(req, res)

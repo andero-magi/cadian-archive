@@ -2,10 +2,10 @@ import dotenv from "dotenv"
 import cors from "cors"
 import express, { json } from 'express'
 import { serve, setup } from 'swagger-ui-express'
-import swaggerDoc from './docs/swagger.json'
-import PostsService from "./post-service"
-import ImagesService from "./image-service"
-import TagService from "./tag-service"
+import swaggerDoc from './docs/swagger.json' with {type: "json"}
+import PostsService from "./post-service.js"
+import ImagesService from "./image-service.js"
+import TagService from "./tag-service.js"
 import { registerRoutes } from "./routes.mjs"
 import { PostsController } from "./controllers/PostsController.mjs"
 import { AssetsController } from "./controllers/AssetController.mjs"

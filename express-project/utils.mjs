@@ -1,13 +1,13 @@
-import { Response, Request } from "express"
-import UUID from "uuid"
+import exp from "express"
+import { parse as parseUuid } from "uuid"
 
 /**
  * Attempt to get the 'id' parameter and validate it. If 
  * validation fails, null is returned, and an erroneous code
  * sent as response, otherwise the ID is returned.
  * 
- * @param {Request} req Request
- * @param {Response} res Response
+ * @param {exp.Request} req Request
+ * @param {exp.Response} res Response
  * 
  * @returns The validated ID, or null
  */
@@ -20,7 +20,7 @@ export function getIdParam(req, res) {
   }
   
   try {
-    UUID.parse(id)
+    parseUuid(id)
   } catch (err) {
     res.status(400).send({error: "Invalid UUID"})
     return null
