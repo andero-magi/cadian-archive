@@ -1,4 +1,6 @@
+import Sequelize from "@sequelize/core"
 import { v7 } from "uuid"
+import { Post } from "./models/Post.model.js"
 
 function dateTimeNow() {
   return new Date()
@@ -8,10 +10,11 @@ function dateTimeNow() {
  * Posts service, modifies, gets, queries and deletes posts.
  */
 export default class PostsService {
+
   #posts = {}
   
   constructor() {
-  
+
   }
 
   /**
@@ -21,13 +24,14 @@ export default class PostsService {
    * @param {any[]} searchExpr Array of search expressions. Expressions 
    *                           must be objects with the testPost(post) => boolean method.
    * 
-   * @returns {object[]} An array of posts matching the search
+   * @returns {Post[]} An array of posts matching the search
    */
   async searchPosts(searchExpr) {
     let result = []
+    let posts = await Post.findAll()
 
-    outer: for (let uuid in this.#posts) {
-      let post = this.#posts[uuid]
+    outer: for (let uuid in posts) {
+      let post = posts[uuid]
 
       for (let expr of searchExpr) {
         if (expr.testPost(post)) {
@@ -49,6 +53,8 @@ export default class PostsService {
         this.#sortBy(result, p => p.upload_date)
       }
     }
+
+    console.log(result)
     
     return result
   }
@@ -64,10 +70,23 @@ export default class PostsService {
   /**
    * Finds a post by its UUID
    * @param id Post UUID
-   * @returns Found post, or undefined, if not found
+   * @returns {Post} Found post, or undefined, if not found
    */
   async getPostById(id) {
-    return this.#posts[id]
+    let cached = this.#posts[id]
+
+    if (cached != null) {
+      return cached
+    }
+
+    let found = await Post.findOne({where: {id: id}})
+    if (found == null) {
+      return null
+    }
+
+    this.#posts[found.id] = found
+
+    return found
   }
 
   /**
@@ -77,31 +96,30 @@ export default class PostsService {
    * @param {any} id UUID of the post to modify
    * @param {any} postData New post data
    * 
-   * @returns The new, modified, post
+   * @returns {Post} The new, modified, post
    */
   async modifyPost(id, postData) {
     let existing = await this.getPostById(id)
 
-    let post = {
-      id: id,
+    if (existing == null) {
+      return null
+    }
 
+    existing.set({
       content: postData.content,
       author_id: postData.author_id,
-
-      tags: postData.tags,
-
-      upload_date: existing?.upload_date,
       modified_date: dateTimeNow()
-    }
-  
-    this.#posts[id] = post
-    return post
+    })
+
+    await existing.save()
+
+    return existing
   }
 
   /**
    * Generates a new UUID and creates a new post
    * @param {any} postData Post data
-   * @returns Created post, with ID
+   * @returns {Post} Created post, with ID
    */
   async createPost(postData) {
     let post = {
@@ -115,8 +133,12 @@ export default class PostsService {
       modified_date: dateTimeNow(),
       upload_date: dateTimeNow()
     }
-  
-    this.#posts[post.id] = post
+
+    let p = await Post.create(post)
+    await p.save()
+
+    this.#posts[p.id] = p
+
     return post
   }
 
@@ -125,6 +147,12 @@ export default class PostsService {
    * @param {any} postId Post UUID
    */
   async deletePost(postId) {
-    delete this.#posts[postId]
+    let found = await this.getPostById(postId)
+    if (found == null) {
+      return
+    }
+
+    delete this.#posts[found.id]
+    await found.destroy()
   }
 }

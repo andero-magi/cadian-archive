@@ -1,5 +1,6 @@
 import ex from "express"
 import ImagesService from "../image-service.js"
+import { getIdParam } from "../utils.mjs"
 
 export class AssetsController {
 
@@ -28,8 +29,19 @@ export class AssetsController {
     if (imgData == null) {
       res.status(404).send({error: `Image with ID ${id} not found`})
     }
+
+    let mimeType
   
-    res.contentType = "image/jpeg"
-    return res.status(200).send(imgData)
+    if (imgData.image_type == "png") {
+      mimeType = "image/png"
+    } else {
+      mimeType = "image/jpeg"
+    }
+
+    res.writeHead(200, null, {
+      'content-type': mimeType,
+      'content-length': imgData.image_data.length
+    });
+    res.end(imgData.image_data)
   }
 }

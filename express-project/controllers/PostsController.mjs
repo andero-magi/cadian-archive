@@ -1,15 +1,16 @@
 import express from "express"
+import yup from "yup"
 import { getIdParam } from "../utils.mjs"
 import PostsService from "../post-service.js"
 import ImagesService from "../image-service.js"
 import TagService from "../tag-service.js"
 import * as tagsParser from "../tags-parser.js"
-import yup from "yup"
+import { Post } from "../models/Post.model.js"
 
 // Define post schemas
 export const PostShape = yup.object().shape({
   tags: yup.array().of(yup.string()).required(),
-  author_id: yup.number().required(),
+  author_id: yup.string().required(),
   content: yup.array().of(yup.object().shape({
     type: yup.string().oneOf(['imageref', 'imagedata', 'section', 'header', 'title']),
     data: yup.string()
@@ -67,6 +68,7 @@ export class PostsController {
     }
   
     await processImages(this.#images, j)
+    await processTags(j, this.#tagService)
   
     let created = await this.#posts.createPost(j)
     res.status(201).send(created)
@@ -219,8 +221,17 @@ async function processImages(images, j) {
       continue
     }
 
-    let uploadedId = await images.uploadImage(c.data)
+    let uploadedId = await images.uploadImage(c.data, c.image_type ?? "jpeg")
     c.data = uploadedId
     c.type = "imageref"
   }
+}
+
+/**
+ * 
+ * @param {object} post 
+ * @param {TagService} tagService 
+ */
+async function processTags(post, tagService) {
+  await tagService.linkTags(post.tags, tagService)
 }

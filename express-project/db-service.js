@@ -1,15 +1,7 @@
-import { Sequelize } from "sequelize"
+import { Sequelize } from '@sequelize/core';
+import { MariaDbDialect } from '@sequelize/mariadb';
 
-let dataName = process.env.DB_DATANAME
-let userName = process.env.DB_USERNAME
-let password = process.env.DB_PASSWORD
-let host = process.env.DB_HOSTNAME
-
-const sequelize = new Sequelize(dataName, userName, password, {
-  host: host,
-  dialect: process.env.DB_DIALECT ?? "mariadb",
-  logging: console.log
-})
+let sequelize;
 
 async function authenticateDbConnection() {
   try {
@@ -21,13 +13,43 @@ async function authenticateDbConnection() {
   }
 }
 
-authenticateDbConnection()
+/**
+ * Initialize the database and connect to it.
+ */
+export async function initDatabase() {
+  let dataName = process.env.DB_DATANAME
+  let userName = process.env.DB_USERNAME
+  let password = process.env.DB_PASSWORD
+  let host = process.env.DB_HOSTNAME
 
-const db = {}
-db.Sequalize = Sequelize
-db.sequelize = sequelize
+  sequelize = new Sequelize({
+    dialect: MariaDbDialect,
+    database: dataName,
+    user: userName,
+    password: password,
+    host: host,
+    showWarnings: true,
+    connectTimeout: 1000,
+    logging: console.log,
+    define: {
+      timestamps: false
+    }
+  })
 
-async function sync() {
-  await sequelize.sync({ alter: true })
-  console.log("db synced")
+  authenticateDbConnection()
+}
+
+/**
+ * Get the current database instance
+ * @returns {Sequelize} The current database instance
+ */
+export function getSequelize() {
+  return sequelize
+}
+
+/**
+ * Sync the database
+ */
+export async function sync() {
+  await sequelize.sync()
 }
