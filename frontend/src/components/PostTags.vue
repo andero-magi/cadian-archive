@@ -27,10 +27,10 @@ export default {
         <div aria-expanded="false" data-bs-toggle="dropdown" class="posttag p-1 px-3 my-1 dropdown-toggle">
           {{ t }}
         </div>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Add to search</a></li>
-          <li><a class="dropdown-item" href="#">Remove from search</a></li>
-          <li><a class="dropdown-item" href="#">Search for</a></li>
+        <ul class="dropdown-menu tag-action-listeners">
+          <li><a class="dropdown-item" tag-act="add" :tag="t" href="#">Add to search</a></li>
+          <li><a class="dropdown-item" tag-act="remove" :tag="t" href="#">Remove from search</a></li>
+          <li><a class="dropdown-item" tag-act="search" :tag="t" href="#">Search for</a></li>
         </ul>
       </div>
     </div>
