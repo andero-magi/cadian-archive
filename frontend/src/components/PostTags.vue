@@ -12,6 +12,9 @@ export default {
 
     this.currentPost = await fetched.json()
     console.log(this.currentPost)
+
+    this.currentPost.upload_date = new Date(this.currentPost.upload_date)
+    this.currentPost.modified_date = new Date(this.currentPost.modified_date)
   }
 }
 </script>
@@ -19,14 +22,27 @@ export default {
 <template>
   <div class="sticky-top d-flex flex-column flex-shrink-0 p-3 text-white bg-darker" style="width: 280px; height: 100vh;">
     <h5 class="mb-4">Post Tags</h5>
-    <h5 class="mb-4">Metadata</h5>
+    <div v-for="t in currentPost.tags">
+      <div class="dropdown">
+        <div aria-expanded="false" data-bs-toggle="dropdown" class="posttag p-1 px-3 my-1 dropdown-toggle">
+          {{ t }}
+        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Add to search</a></li>
+          <li><a class="dropdown-item" href="#">Remove from search</a></li>
+          <li><a class="dropdown-item" href="#">Search for</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <h5 class="mb-2 mt-4">Metadata</h5>
     <div>
       <dl>
         <dt>Upload Date</dt>
-        <dd>{{ currentPost.upload_date }}</dd>
+        <dd>{{ currentPost.upload_date.toUTCString() }}</dd>
 
         <dt>Modified Date</dt>
-        <dd>{{ currentPost.modified_date }}</dd>
+        <dd>{{ currentPost.modified_date.toUTCString() }}</dd>
 
         <dt>Uploader</dt>
         <dd>{{ currentPost.author_id }}</dd>
