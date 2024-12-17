@@ -1,3 +1,21 @@
+<script>
+export default {
+  data() {
+    return {
+      currentPost: Object
+    }
+  },
+  async created() {
+    let idParam = this.$route.params.id
+    let fetched = await fetch(`http://localhost:8080/posts/${idParam}`)
+    console.log(fetched)
+
+    this.currentPost = await fetched.json()
+    console.log(this.currentPost)
+  }
+}
+</script>
+
 <template>
   <div class="sticky-top d-flex flex-column flex-shrink-0 p-3 text-white bg-darker" style="width: 280px; height: 100vh;">
     <h5 class="mb-4">Post Tags</h5>
@@ -5,13 +23,13 @@
     <div>
       <dl>
         <dt>Upload Date</dt>
-        <dd>some time after Noah split the Red Sea</dd>
+        <dd>{{ currentPost.upload_date }}</dd>
 
         <dt>Modified Date</dt>
-        <dd>on the second coming of christ</dd>
+        <dd>{{ currentPost.modified_date }}</dd>
 
         <dt>Uploader</dt>
-        <dd>A furry that's suspiciously really into computer screens</dd>
+        <dd>{{ currentPost.author_id }}</dd>
       </dl>
     </div>
   </div>

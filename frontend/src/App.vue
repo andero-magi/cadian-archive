@@ -1,8 +1,9 @@
 <script setup>
-  import topbar from "./components/topbar.vue"
-  import leftsidebar from "./components/leftsidebar.vue"
-  import PageContent from "./components/PageContent.vue"
-  import PostTags from "./components/PostTags.vue"
+import { RouterLink, RouterView } from 'vue-router'
+import topbar from "./components/topbar.vue"
+import leftsidebar from "./components/leftsidebar.vue"
+import PageContent from "./components/PageContent.vue"
+import PostTags from "./components/PostTags.vue"
 </script>
 
 <template>
@@ -10,15 +11,9 @@
 
   <div class="d-flex align-items-start w-100">
     <leftsidebar />
-
-    <div class="d-flex justify-content-center" style="width: 100%;">
-      <PageContent />
-    </div>
-
-    <PostTags />
+    <RouterView />
   </div>
 </template>
 
 <style scoped>
-
 </style>
