@@ -18,9 +18,9 @@ export const PostShape = yup.object().shape({
 })
 
 export class PostsController {
-  #posts = null
-  #tagService = null
-  #images = null
+  #posts
+  #tagService
+  #images
   
   /**
    * Create the posts controller
@@ -48,8 +48,16 @@ export class PostsController {
     } else {
       searchExpr = tagsParser.parseTags(search)
     }
+
+    let postArray = await this.#posts.searchPosts(searchExpr)
+    let arr = []
+
+    for (let p of postArray) {
+      let api = await toApiObject(p, this.#tagService)
+      arr.push(api)
+    }
     
-    res.status(200).send(await this.#posts.searchPosts(searchExpr))
+    res.status(200).send(arr)
   }
 
   /**
@@ -93,7 +101,7 @@ export class PostsController {
     }
   
     await this.#posts.deletePost(id)
-    res.status(200).send()
+    res.status(200).send({message: "Successfully deleted post"})
   }
 
   /**
@@ -114,7 +122,7 @@ export class PostsController {
       return 
     }
   
-    return res.status(200).send(post)
+    return res.status(200).send(await toApiObject(post, this.#tagService))
   }
 
   /**
@@ -142,6 +150,9 @@ export class PostsController {
     if (!(await validateTags(this.#tagService, req, res, j))) {
       return
     }
+
+    await processImages(this.#images, j)
+    await processTags(j, this.#tagService)
   
     let newObj = await this.#posts.modifyPost(id, j)
     res.status(200).send(newObj)
@@ -171,6 +182,27 @@ async function validateTags(tagService, req, res, j) {
   }
 
   return true
+}
+
+/**
+ * Maps the post data to an API return value. Gets all tags linked to the
+ * post and attaches their names to the object with a 'tags' property.
+ * 
+ * @param {Post} post 
+ * @param {TagService} tagService 
+ */
+async function toApiObject(post, tagService) {
+  let tags = await tagService.getLinkedTags(post)
+  let tagNameArray = tags.map(t => t.id)
+
+  return {
+    id: post.id,
+    author_id: post.author_id,
+    modified_date: post.modified_date,
+    upload_date: post.upload_date,
+    content: post.content,
+    tags: tagNameArray
+  }
 }
 
 /**

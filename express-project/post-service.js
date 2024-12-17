@@ -24,7 +24,7 @@ export default class PostsService {
    * @param {any[]} searchExpr Array of search expressions. Expressions 
    *                           must be objects with the testPost(post) => boolean method.
    * 
-   * @returns {Post[]} An array of posts matching the search
+   * @returns {Promise<Post[]>} An array of posts matching the search
    */
   async searchPosts(searchExpr) {
     let result = []
@@ -70,7 +70,7 @@ export default class PostsService {
   /**
    * Finds a post by its UUID
    * @param id Post UUID
-   * @returns {Post} Found post, or undefined, if not found
+   * @returns {Promise<Post>} Found post, or undefined, if not found
    */
   async getPostById(id) {
     let cached = this.#posts[id]
@@ -96,7 +96,7 @@ export default class PostsService {
    * @param {any} id UUID of the post to modify
    * @param {any} postData New post data
    * 
-   * @returns {Post} The new, modified, post
+   * @returns {Promise<Post>} The new, modified, post
    */
   async modifyPost(id, postData) {
     let existing = await this.getPostById(id)
@@ -119,7 +119,7 @@ export default class PostsService {
   /**
    * Generates a new UUID and creates a new post
    * @param {any} postData Post data
-   * @returns {Post} Created post, with ID
+   * @returns {Promise<Post>} Created post, with ID
    */
   async createPost(postData) {
     let post = {

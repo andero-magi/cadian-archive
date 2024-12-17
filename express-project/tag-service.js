@@ -18,7 +18,9 @@ export default class TagService {
     let postId = post.id
     let links = []
 
-    await PostTag.destroy({where: {post_id: post.id}})
+    if (post.id != undefined) {
+      await PostTag.destroy({where: {post_id: post.id}})
+    }
 
     for (let tagName of tagNames) {
       let tagData = this.getResolvedTag(tagName)
@@ -92,6 +94,11 @@ export default class TagService {
     return tagData
   }
 
+  /**
+   * 
+   * @param {*} tagName 
+   * @returns {Promise<Tag>}
+   */
   async getTagData(tagName) {
     let cached = this.#tags[tagName]
     if (cached != null) {
