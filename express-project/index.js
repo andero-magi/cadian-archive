@@ -358,7 +358,7 @@ app.get("/users/:id", (req, res) => {
 *DELETE USER BY ID
 *RETURN 200/404
 */
-
+/*
 app.delete("/users/:id", async (req, res) => {
   if (req.params.id == null){
     return 
@@ -374,5 +374,5 @@ app.delete("/users/:id", async (req, res) => {
   await users.deleteUser(id)
   res.status(200).send()
 })
-
+*/
 
