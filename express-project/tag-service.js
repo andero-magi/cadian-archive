@@ -18,12 +18,15 @@ export default class TagService {
     let postId = post.id
     let links = []
 
-    if (post.id != undefined) {
+    if (postId != undefined) {
       await PostTag.destroy({where: {post_id: post.id}})
+      console.log("------------ Destroying some post tags")
+    } else {
+      throw "Post id undefined"
     }
 
     for (let tagName of tagNames) {
-      let tagData = this.getResolvedTag(tagName)
+      let tagData = await this.getResolvedTag(tagName)
       if (tagData == null) {
         continue
       }
@@ -33,6 +36,10 @@ export default class TagService {
         tag_id: tagData.id
       })
       await link.save()
+
+      console.log("Created post tag:")
+      console.log(link)
+
       links.push(link)
     }
 
@@ -48,8 +55,10 @@ export default class TagService {
     let found = await PostTag.findAll({where: {post_id: post.id}})
     let tagData = []
 
+    console.log(found)
+
     for (let pt of found) {
-      let tag = this.getTagData(pt.id)
+      let tag = await this.getTagData(pt.tag_id)
       if (tag == null) {
         continue
       }
@@ -100,6 +109,7 @@ export default class TagService {
    * @returns {Promise<Tag>}
    */
   async getTagData(tagName) {
+    console.log("tag name: " + tagName + ", type=" + typeof tagName)
     let cached = this.#tags[tagName]
     if (cached != null) {
       return cached
@@ -116,5 +126,22 @@ export default class TagService {
 
   async validateTag(tagName) {
     return this.getTagData(tagName) != null
+  }
+
+  async createNewTag(tagName) {
+    let created = await Tag.create({id: tagName})
+    await created.save()
+
+    this.#tags[tagName] = created
+
+    return created
+  }
+
+  async getAllTags() {
+    let tagsArray = await Tag.findAll({})
+    for (let t of tagsArray) {
+      this.#tags[t.id] = t
+    }
+    return tagsArray
   }
 }

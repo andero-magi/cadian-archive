@@ -53,8 +53,6 @@ export default class PostsService {
         this.#sortBy(result, p => p.upload_date)
       }
     }
-
-    console.log(result)
     
     return result
   }

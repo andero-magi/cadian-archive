@@ -75,10 +75,11 @@ export class PostsController {
       return
     }
   
-    await processImages(this.#images, j)
-    await processTags(j, this.#tagService)
-  
     let created = await this.#posts.createPost(j)
+
+    await processImages(this.#images, created)
+    await processTags(j.tags, created, this.#tagService)
+
     res.status(201).send(created)
   }
 
@@ -151,11 +152,11 @@ export class PostsController {
       return
     }
 
-    await processImages(this.#images, j)
-    await processTags(j, this.#tagService)
+    await processImages(this.#images, existing)
+    await processTags(j.tags, existing, this.#tagService)
   
     let newObj = await this.#posts.modifyPost(id, j)
-    res.status(200).send(newObj)
+    res.status(200).send(await toApiObject(newObj, this.#tagService))
   }
 }
 
@@ -194,6 +195,9 @@ async function validateTags(tagService, req, res, j) {
 async function toApiObject(post, tagService) {
   let tags = await tagService.getLinkedTags(post)
   let tagNameArray = tags.map(t => t.id)
+
+  console.log(tags)
+  console.log(tagNameArray)
 
   return {
     id: post.id,
@@ -242,7 +246,7 @@ async function tryValidate(req, res) {
  * them to the internal service, replacing the imagedata values
  * with imagerefs.
  * 
- * @param {*} j Post data
+ * @param {Post} j Post data
  * @param {ImagesService} images 
  */
 async function processImages(images, j) {
@@ -261,9 +265,10 @@ async function processImages(images, j) {
 
 /**
  * 
- * @param {object} post 
+ * @param {string[]} tags
+ * @param {Post} post 
  * @param {TagService} tagService 
  */
-async function processTags(post, tagService) {
-  await tagService.linkTags(post.tags, tagService)
+async function processTags(tags, post, tagService) {
+  await tagService.linkTags(tags, post)
 }

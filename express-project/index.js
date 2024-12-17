@@ -11,6 +11,7 @@ import { PostsController } from "./controllers/PostsController.mjs"
 import { AssetsController } from "./controllers/AssetController.mjs"
 import { initDatabase, getSequelize, sync} from "./db-service.js"
 import { registerModels } from "./models/models.js"
+import { TagsController } from "./controllers/TagsController.mjs"
 
 dotenv.config()
 
@@ -31,12 +32,13 @@ const host = process.env.HOST ?? "localhost"
 
 const postsC = new PostsController(posts, tagService, images)
 const imagesC = new AssetsController(images)
+const tagsC = new TagsController(tagService)
 
 // Set up server
 app.use(cors())
 app.use('/docs', serve, setup(swaggerDoc))
 app.use(json())
 
-registerRoutes(app, postsC, imagesC)
+registerRoutes(app, postsC, imagesC, tagsC)
 
 app.listen(port, () => console.log(`URL: http://${host}:${port}/docs`))
