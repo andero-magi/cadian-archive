@@ -1,22 +1,47 @@
-const UUID = require('uuid')
+import Sequelize from '@sequelize/core'
+import { v7 } from 'uuid'
+import { ImageModel } from './models/Image.model.js'
 
 class ImagesService {
   #images = {}
+  #db
 
-  constructor() {
-
+  /**
+   * 
+   * @param {Sequelize} db 
+   */
+  constructor(db) {
+    this.#db = db
   }
 
-  async uploadImage(imageData) {
-    let imgId = UUID.v7()
-    this.#images[imgId] = Buffer.from(imageData, 'base64')
+  async uploadImage(imageData, imageType) {
+    let imgId = v7()
+    let buf = Buffer.from(imageData, 'base64')
+
+    let i = await ImageModel.create({
+      id: imgId,
+      image_data: buf,
+      image_type: imageType
+    })
+    i.save()
+
+    this.#images[imgId] = i
+
     return imgId
   }
 
   async findImage(imageId) {
-    let data = this.#images[imageId]
-    return data
+    let cached = this.#images[imageId]
+
+    if (cached != null) {
+      return cached
+    }
+
+    let result = await ImageModel.findOne({where: {id: imageId}})
+    this.#images[result.id] = result
+
+    return result
   }
 }
 
-module.exports = ImagesService
+export default ImagesService

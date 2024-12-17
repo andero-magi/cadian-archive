@@ -2,12 +2,20 @@
   "scripts": {
     "start": "npx nodemon ."
   },
+  "type": "module",
   "dependencies": {
+    "@sequelize/core": "^7.0.0-alpha.43",
+    "@sequelize/mariadb": "^7.0.0-alpha.43",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.1",
     "nodemon": "^3.1.7",
     "swagger-ui": "^5.18.2",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.3",
     "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.16.0"
   }
 }

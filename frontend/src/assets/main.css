@@ -1,0 +1,7 @@
+:root {
+  --mat-dark-1: #212121;
+}
+
+.bg-darker {
+  background-color: var(--mat-dark-1);
+}
