@@ -1,6 +1,6 @@
-const UUID = require('uuid');
+import * as UUID from "uuid"
 
-class UserService {
+export class UserService {
     #users = {
 
     };
@@ -19,19 +19,8 @@ constructor(){
     }
 
 
-    async createUser(){
-
-        let users = [
-            { 
-            id: "01938b7d-e200-72c5-9009-6887e02d2338",
-            username: "officialdonaldtusk",
-            password: "notagermanspy",
-            email: "donaldtusk@gmail.com",
-            }
-          ]
-          users.forEach(user => {
-            this.#users[user.id] = user;
-          });
+    async createUser(userdata){
+        this.#users[userdata.id] = userdata;userdata;
     }
 
 modifyUser(id,username, password, email){
@@ -46,14 +35,12 @@ modifyUser(id,username, password, email){
         return user;
     }
 
-deleteUser(id,username,password){
-    if (this.#users[id] && this.#users[id].username === username && this.#users[id].password === password) {
-        delete this.#users[id];
-        return true;
+    deleteUser(id) {
+        if (this.#users[id]) {
+            delete this.#users[id];
+            return true;
+        }
+        return false;
     }
-    return false;
+    
 }
-}
-
-
-module.exports = UserService;

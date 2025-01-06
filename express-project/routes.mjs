@@ -9,7 +9,7 @@ import { AssetsController } from "./controllers/AssetController.mjs"
  * @param {PostsController} posts Posts controller
  * @param {AssetsController} assets Assets controller
  */
-export function registerRoutes(app, posts, assets) {
+export function registerRoutes(app, posts, assets, users) {
   // == Posts ==
   app.route("/posts/")
     .get((req, res) => posts.searchPosts(req, res))
@@ -25,4 +25,11 @@ export function registerRoutes(app, posts, assets) {
     .get((req, res) => assets.findAsset(req, res))
 
   // == Users ==
+  app.route("/users")
+  .post((req, res) => users.createUser(req, res))
+  
+  app.route("/users/:id")
+   .put((req, res) => users.updateUser(req, res))
+   .get((req, res) => users.getUser(req, res))
+   .delete((req, res) => users.deleteUser(req, res))
 }
