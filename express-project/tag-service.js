@@ -19,15 +19,15 @@ export default class TagService {
     let links = []
 
     if (postId != undefined) {
-      await PostTag.destroy({where: {post_id: post.id}})
-      console.log("------------ Destroying some post tags")
+      await PostTag.destroy({where: {post_id: postId}})
     } else {
       throw "Post id undefined"
     }
 
     for (let tagName of tagNames) {
-      let tagData = await this.getResolvedTag(tagName)
-      if (tagData == null) {
+      let tagData = await this.resolveTag(tagName)
+
+      if (!tagData) {
         continue
       }
 
@@ -36,9 +36,6 @@ export default class TagService {
         tag_id: tagData.id
       })
       await link.save()
-
-      console.log("Created post tag:")
-      console.log(link)
 
       links.push(link)
     }
@@ -55,11 +52,9 @@ export default class TagService {
     let found = await PostTag.findAll({where: {post_id: post.id}})
     let tagData = []
 
-    console.log(found)
-
     for (let pt of found) {
       let tag = await this.getTagData(pt.tag_id)
-      if (tag == null) {
+      if (!tag) {
         continue
       }
 
@@ -69,16 +64,15 @@ export default class TagService {
     return tagData
   }
 
-  async getResolvedTag(tagName) {
-    let t = this.getTagData(tagName)
-    if (t == null) {
+  async resolveTag(tagName) {
+    let t = await this.getTagData(tagName)
+    if (!t) {
       return null
     }
 
-    if (t.parent_id == null) {
+    if (!t.parent_id) {
       return t
     }
-
     if (!t.is_alias) {
       return t
     }
@@ -87,9 +81,9 @@ export default class TagService {
   }
 
   async addTag(tagName) {
-    let existing = this.getTagData(tagName)
-    if (existing != null) {
-      return
+    let existing = await this.getTagData(tagName)
+    if (existing) {
+      return existing
     }
 
     let tagData = await Tag.create({
@@ -109,14 +103,15 @@ export default class TagService {
    * @returns {Promise<Tag>}
    */
   async getTagData(tagName) {
-    console.log("tag name: " + tagName + ", type=" + typeof tagName)
     let cached = this.#tags[tagName]
-    if (cached != null) {
+
+    if (cached) {
       return cached
     }
 
-    let found = Tag.findOne({where: {id: tagName}})
-    if (found == null) {
+    let found = await Tag.findOne({where: {id: tagName}})
+
+    if (!found) {
       return null
     }
 
@@ -125,16 +120,13 @@ export default class TagService {
   }
 
   async validateTag(tagName) {
-    return this.getTagData(tagName) != null
-  }
+    let found = await this.getTagData(tagName)
 
-  async createNewTag(tagName) {
-    let created = await Tag.create({id: tagName})
-    await created.save()
+    if (found) {
+      return true
+    }
 
-    this.#tags[tagName] = created
-
-    return created
+    return false
   }
 
   async getAllTags() {

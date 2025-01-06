@@ -67,17 +67,15 @@ export class PostsController {
    */
   async createPost(req, res) {
     let j = await tryValidate(req, res)
-  
     if (j == null) {
       return
     }
-    if (!(await validateTags(this.#tagService, req, res, j))) {
-      return
-    }
+
+    await ensureTagsExist(this.#tagService, j.tags)
+    await processImages(this.#images, j.content)
   
     let created = await this.#posts.createPost(j)
 
-    await processImages(this.#images, created)
     await processTags(j.tags, created, this.#tagService)
 
     res.status(201).send(created)
@@ -148,11 +146,8 @@ export class PostsController {
       return
     }
   
-    if (!(await validateTags(this.#tagService, req, res, j))) {
-      return
-    }
-
-    await processImages(this.#images, existing)
+    await ensureTagsExist(this.#tagService, j.tags)
+    await processImages(this.#images, existing.content)
     await processTags(j.tags, existing, this.#tagService)
   
     let newObj = await this.#posts.modifyPost(id, j)
@@ -161,28 +156,25 @@ export class PostsController {
 }
 
 /**
- * Validate all tags in the Post data provided.
  * 
  * @param {TagService} tagService 
- * @param {express.Request} req Request
- * @param {express.Response} res Response 
- * @param {*} j Post data
- * 
- * @returns True, if all tags are valid, False otherwise
+ * @param {string[]} tags
  */
-async function validateTags(tagService, req, res, j) {
-  let tags = j.tags
+async function ensureTagsExist(tagService, tags) {
+  if (tags == null || tags.length < 1) {
+    return
+  }
 
   for (let i = 0; i < tags.length; i++) {
     let tag = tags[i]
-
-    if (!(await tagService.validateTag(tag))) {
-      res.status(400).send({error: `Unknown or invalid tag ${tag}`})
-      return false
+    let valid = await tagService.validateTag(tag)
+    
+    if (valid) {
+      continue
     }
-  }
 
-  return true
+    await tagService.addTag(tag)
+  }
 }
 
 /**
@@ -195,9 +187,6 @@ async function validateTags(tagService, req, res, j) {
 async function toApiObject(post, tagService) {
   let tags = await tagService.getLinkedTags(post)
   let tagNameArray = tags.map(t => t.id)
-
-  console.log(tags)
-  console.log(tagNameArray)
 
   return {
     id: post.id,
@@ -246,11 +235,14 @@ async function tryValidate(req, res) {
  * them to the internal service, replacing the imagedata values
  * with imagerefs.
  * 
- * @param {Post} j Post data
+ * @param {any[]} j content array
  * @param {ImagesService} images 
  */
-async function processImages(images, j) {
-  let contentArray = j.content
+async function processImages(images, contentArray) {
+  if (contentArray == null) {
+    return
+  }
+
   for (let i = 0; i < contentArray.length; i++) {
     let c = contentArray[i]
     if (c.type != 'imagedata') {
