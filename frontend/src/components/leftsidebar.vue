@@ -77,6 +77,15 @@ function onTagClick(ev) {
   updateSearchStringFromList()
 }
 
+// Called when the "Search" button is clickeed
+function onSearch() {
+  reloadTagList()
+  runSearch()
+}
+
+/**
+ * Update the searchString by joining the tagList into a string
+ */
 function updateSearchStringFromList() {
     // Remake what the user has typed in because we changed shit
   let newStr = ""
@@ -92,12 +101,6 @@ function updateSearchStringFromList() {
 
   // Update the 'q=' in the URL
   pushSearchState()
-}
-
-// Called when the "Search" button is clickeed
-function onSearch() {
-  reloadTagList()
-  runSearch()
 }
 
 function runSearch() {
@@ -122,8 +125,6 @@ function reloadTagList() {
 function onTagEvent(event: CustomEvent<string>) {
   let tagAct = event.type
   let tag = event.detail
-
-  console.log(`tagAct=${tagAct} tag='${tag}'`)
   
   if (tagAct == SEARCH_SET_EVENT) {
     let s = new TagSearch()
@@ -131,16 +132,29 @@ function onTagEvent(event: CustomEvent<string>) {
     s.negated = false
     tagList.value = [s]
 
+    // Probably the worst offense of anything here in this mess:
+    //  1. Change the tag list
+    //  2. Combine that list into a string and change the searchString value
+    //  3. Use that string to route to the search view
     updateSearchStringFromList()
     runSearch()
 
     return
   }
 
+  // Find the index of the tag we're looking to add/exclude/remove in the 
+  // current searched tags list, if it's in there.
+  // Following if statements will vary in behavior depending on if tag 
+  // is in list or not
   let idx = tagList.value.findIndex(t => (t as TagSearch).tagName == tag)
+
+  // -1 = not found = tag is not the searched tags list
+  const NOT_FOUND = -1
   
+  // Add tag to search, if already in search, ensure it's not being negated
+  // otherwise just push onto the searched tags list
   if (tagAct == SEARCH_ADD_EVENT) {
-    if (idx != -1) {
+    if (idx != NOT_FOUND) {
       let s = tagList.value[idx]
 
       if (s.negated) {
@@ -160,8 +174,9 @@ function onTagEvent(event: CustomEvent<string>) {
     return
   }
 
+  // Remove tag, if not in list, don't do anything, if it is, remove it
   if (tagAct == SEARCH_REMOVE_EVENT) {
-    if (idx == -1) {
+    if (idx == NOT_FOUND) {
       return
     }
 
@@ -171,8 +186,10 @@ function onTagEvent(event: CustomEvent<string>) {
     return
   }
 
+  // Exclude tag from search, if not in list, negate and push to list
+  // else just negate the found tag
   if (tagAct == SEARCH_EXCLUDE_EVENT) {
-    if (idx == -1) {
+    if (idx == NOT_FOUND) {
       let s = new TagSearch()
       s.tagName = tag
       s.negated = true
@@ -190,12 +207,15 @@ function onTagEvent(event: CustomEvent<string>) {
 }
 
 onMounted(() => {
+  // Listen to the tag search being changed
   document.body.addEventListener(SEARCH_ADD_EVENT, onTagEvent)
   document.body.addEventListener(SEARCH_EXCLUDE_EVENT, onTagEvent)
   document.body.addEventListener(SEARCH_REMOVE_EVENT, onTagEvent)
   document.body.addEventListener(SEARCH_SET_EVENT, onTagEvent)
 })
+
 onUnmounted(() => {  
+  // Stop listening to the tag search being changed
   document.body.removeEventListener(SEARCH_ADD_EVENT, onTagEvent)
   document.body.removeEventListener(SEARCH_EXCLUDE_EVENT, onTagEvent)
   document.body.removeEventListener(SEARCH_REMOVE_EVENT, onTagEvent)
