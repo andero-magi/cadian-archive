@@ -53,5 +53,14 @@ function onDropdownClick(ev: MouseEvent) {
         <dd>{{ currentPost.modified_date.toUTCString() }}</dd>
       </dl>
     </div>
+
+    <h5 class="mb-2 mt-4">Actions</h5>
+    <RouterLink class="btn btn-outline-primary" :to="{name: 'editpost', params: {id: currentPost.id}}">
+      Edit Post
+    </RouterLink>
+    
+    <RouterLink class="btn btn-outline-danger mt-2" :to="{name: 'editpost', params: {id: currentPost.id}}">
+      Delete Post
+    </RouterLink>
   </div>
 </template>
