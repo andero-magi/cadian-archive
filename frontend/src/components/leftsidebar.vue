@@ -13,6 +13,27 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { SEARCH_ADD_EVENT, SEARCH_EXCLUDE_EVENT, SEARCH_REMOVE_EVENT, SEARCH_SET_EVENT } from '@/consts';
+import { onMounted, onUnmounted } from 'vue';
+
   
+function onTagEvent(event: CustomEvent<string>) {
+  let tagAct = event.type
+  let tag = event.detail
+  console.log(`act=${tagAct}, tag=${tag}`)
+}
+
+onMounted(() => {
+  document.body.addEventListener(SEARCH_ADD_EVENT, onTagEvent)
+  document.body.addEventListener(SEARCH_EXCLUDE_EVENT, onTagEvent)
+  document.body.addEventListener(SEARCH_REMOVE_EVENT, onTagEvent)
+  document.body.addEventListener(SEARCH_SET_EVENT, onTagEvent)
+})
+onUnmounted(() => {  
+  document.body.removeEventListener(SEARCH_ADD_EVENT, onTagEvent)
+  document.body.removeEventListener(SEARCH_EXCLUDE_EVENT, onTagEvent)
+  document.body.removeEventListener(SEARCH_REMOVE_EVENT, onTagEvent)
+  document.body.removeEventListener(SEARCH_SET_EVENT, onTagEvent)
+})
 </script>
