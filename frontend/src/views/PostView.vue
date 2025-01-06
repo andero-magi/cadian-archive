@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import PageContent from "../components/PageContent.vue"
 import PostTags from "../components/PostTags.vue"
 import { useRoute } from "vue-router";
@@ -21,7 +21,7 @@ async function fetchPost() {
     return null
   }
 
-  return await getPost()
+  return await getPost(postId)
 }
 </script>
 
