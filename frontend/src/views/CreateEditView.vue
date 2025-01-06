@@ -27,10 +27,6 @@ if (editMode) {
   post.value.content = contentArr
 }
 
-function loadDataFromSections() {
-
-}
-
 async function postPost() {
   if (true) {
     return
