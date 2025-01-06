@@ -1,7 +1,6 @@
 import { API_URL } from "./consts";
-import { Post } from "./models/Post";
 
-export async function getPost(id: string): Promise<Post> {
+export async function getPost(id: string): Promise<any> {
   let fetchUrl = `${API_URL}/posts/${id}`
   let response = await fetch(fetchUrl)
 
