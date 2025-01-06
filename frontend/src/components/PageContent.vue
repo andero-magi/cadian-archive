@@ -11,9 +11,6 @@ onMounted(() => {
 function renderPostContent() {
   const element = document.getElementById("content-output")
 
-  console.log(element)
-  console.log(currentPost)
-
   if (!element || !currentPost) {
     return
   }
