@@ -1,21 +1,25 @@
-<script>
-export default {
-  data() {
-    return {
-      currentPost: Object
-    }
-  },
-  async created() {
-    let idParam = this.$route.params.id
-    let fetched = await fetch(`http://localhost:8080/posts/${idParam}`)
-    console.log(fetched)
+<script lang="ts" setup>
+import { ref } from 'vue';
 
-    this.currentPost = await fetched.json()
-    console.log(this.currentPost)
+const props = defineProps(["post"])
+const currentPost = ref()
 
-    this.currentPost.upload_date = new Date(this.currentPost.upload_date)
-    this.currentPost.modified_date = new Date(this.currentPost.modified_date)
+currentPost.value = props.post
+
+function onDropdownClick(ev: MouseEvent) {
+  let target: HTMLElement = ev.target as HTMLElement
+  let tag = target.getAttribute("tag")
+  let tagAct = target.getAttribute("tag-act")
+
+  if (!tag || !tagAct) {
+    return
   }
+
+  ev.preventDefault()
+  let evType = `tag${tagAct}`
+
+  let event = new CustomEvent(evType, {detail: tag})
+  document.body.dispatchEvent(event)
 }
 </script>
 
@@ -28,9 +32,10 @@ export default {
           {{ t }}
         </div>
         <ul class="dropdown-menu tag-action-listeners">
-          <li><a class="dropdown-item" tag-act="add" :tag="t" href="#">Add to search</a></li>
-          <li><a class="dropdown-item" tag-act="remove" :tag="t" href="#">Remove from search</a></li>
-          <li><a class="dropdown-item" tag-act="search" :tag="t" href="#">Search for</a></li>
+          <li><a @click="onDropdownClick" class="dropdown-item" tag-act="add" :tag="t" href="#">Add to search</a></li>
+          <li><a @click="onDropdownClick" class="dropdown-item" tag-act="rem" :tag="t" href="#">Remove from search</a></li>
+          <li><a @click="onDropdownClick" class="dropdown-item" tag-act="set" :tag="t" href="#">Search for</a></li>
+          <li><a @click="onDropdownClick" class="dropdown-item" tag-act="exl" :tag="t" href="#">Exclude from search</a></li>
         </ul>
       </div>
     </div>
@@ -38,14 +43,14 @@ export default {
     <h5 class="mb-2 mt-4">Metadata</h5>
     <div>
       <dl>
+        <dt>Uploader</dt>
+        <dd>{{ currentPost.author_id }}</dd>
+
         <dt>Upload Date</dt>
         <dd>{{ currentPost.upload_date.toUTCString() }}</dd>
 
         <dt>Modified Date</dt>
         <dd>{{ currentPost.modified_date.toUTCString() }}</dd>
-
-        <dt>Uploader</dt>
-        <dd>{{ currentPost.author_id }}</dd>
       </dl>
     </div>
   </div>
