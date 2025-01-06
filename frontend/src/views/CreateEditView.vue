@@ -18,10 +18,12 @@ if (editMode) {
   post.value = postData
 } else {
   let contentArr: any[] = [
-    { type: "title", data: "Enter title here..." },
-    { type: "section", data: "Enter text here..." }
+    { type: "title", data: "" },
+    { type: "section", data: "" }
   ]
 
+  post.value = {}
+  post.value.tags = []
   post.value.content = contentArr
 }
 
@@ -31,7 +33,6 @@ function loadDataFromSections() {
 
 async function postPost() {
   if (true) {
-    console.log(post.value)
     return
   }
 
@@ -51,27 +52,12 @@ async function postPost() {
   }
 
   let result = await fetch(apiUrl, {method: method, body: post.value})
-  console.log(result)
 }
 
 function addNewElement(type: TextContentElement) {
-  let tagType: string
-  let content: string
-
-  if (type == "header") {
-    tagType = "h2"
-    content = "Enter section title here..."
-  } else if (type == "title") {
-    tagType = "h1"
-    content = "Enter title here..."
-  } else {
-    tagType = "p"
-    content = "Enter text here..."
-  }
-
   let contentData = {
     type: type,
-    data: content
+    data: ""
   }
 
   post.value.content.push(contentData)
@@ -83,13 +69,13 @@ function addNewElement(type: TextContentElement) {
     <div id="content-output" class="rounded mt-5 p-4 bg-darker" style="width: 90%; min-height: 50vh;">
       <template v-for="section in post.content">
         <template v-if="section.type == 'title'">
-          <input v-model="section.data" class="w-100 mb-3 d-block h1 p-2"/>
+          <input placeholder="Enter title here..." v-model="section.data" class="w-100 mb-3 d-block h1 p-2"/>
         </template>
         <template v-if="section.type == 'section'">
-          <textarea class="d-block p-2 w-100 mb-3" style="height: max-content; min-height: max-content; overflow-y: visible; field-sizing: content;" v-model="section.data"></textarea>
+          <textarea placeholder="Enter text here..." class="d-block p-2 w-100 mb-3" style="height: max-content; min-height: max-content; overflow-y: visible; field-sizing: content;" v-model="section.data"></textarea>
         </template>
         <template v-if="section.type == 'header'">
-          <input class="d-block h3 p-2 w-100 mb-3"v-model="section.data" />
+          <input placeholder="Enter paragraph title here..." class="d-block h3 p-2 w-100 mb-3"v-model="section.data" />
         </template>
         <template v-if="section.type == 'imageref' || section.type == 'imagedata'">
           <img :src="section.data" alt="">
@@ -99,7 +85,7 @@ function addNewElement(type: TextContentElement) {
       <div class="d-flex gap-3">
         <div class="dropdown">
           <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown button
+            Add new part...
           </button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" @click="addNewElement('title')" href="#">New Title...</a></li>
