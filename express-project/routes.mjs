@@ -11,7 +11,7 @@ import { TagsController } from "./controllers/TagsController.mjs"
  * @param {AssetsController} assets Assets controller
  * @param {TagsController} tags Tags controller
  */
-export function registerRoutes(app, posts, assets, tags) {
+export function registerRoutes(app, posts, assets, users, tags) {
   // == Posts ==
   app.route("/posts/")
     .get(async (req, res) => await posts.searchPosts(req, res))
@@ -35,4 +35,11 @@ export function registerRoutes(app, posts, assets, tags) {
     .get(async (req, res) => await tags.getTagData(req, res))
 
   // == Users ==
+  app.route("/users")
+  .post((req, res) => users.createUser(req, res))
+  
+  app.route("/users/:id")
+   .put((req, res) => users.updateUser(req, res))
+   .get((req, res) => users.getUser(req, res))
+   .delete((req, res) => users.deleteUser(req, res))
 }
