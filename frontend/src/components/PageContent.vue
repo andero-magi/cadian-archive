@@ -41,6 +41,7 @@ function renderPostContent() {
     // type = imageref
     let img = document.createElement("img")
     img.src = `http://localhost:8080/images/${c.data}`
+    img.style.maxWidth = "90%"
     element.appendChild(img)
   }
 }
