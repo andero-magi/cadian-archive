@@ -1,3 +1,4 @@
+import Sequelize, { Op } from "@sequelize/core"
 import { Post } from "./models/Post.model.js"
 import { PostTag } from "./models/PostTag.model.js"
 import { Tag } from "./models/Tag.model.js"
@@ -7,6 +8,55 @@ export default class TagService {
 
   constructor() {
 
+  }
+
+  /**
+   * Find posts by the tags linked to them
+   * @param {TagSearch[]} searchTags 
+   * @returns {Promise<Set<string>>} A set of post IDs that match the query
+   */
+  async findPostsByLinkedTags(searchTags) {
+    let positiveTags = []
+    let negatedTags = []
+
+    for (let s of searchTags) {
+      if (s.negated) {
+        negatedTags.push(s.tagName)
+      } else {
+        positiveTags.push(s.tagName)
+      }
+    }
+
+    let andOps = []
+    if (negatedTags.length > 0) {
+      andOps.push({id: {[Op.notIn]: negatedTags}})
+    }
+    if (positiveTags.length > 0) {
+      andOps.push({id: {[Op.in]: positiveTags}})
+    }
+
+    let matching
+    
+    if (andOps.length > 0) {
+      matching = await PostTag.findAll(
+        {
+          where: {[Op.and]: [andOps]},
+          group: 'post_id',
+          // attributes: [
+          //   [Sequelize.fn("DISTINCT")]
+          // ]
+        }
+      )
+    } else {
+      matching = await PostTag.findAll()
+    }
+
+    let postIds = new Set()
+    for (let m of matching) {
+      postIds.add(m.post_id)
+    }
+
+    return postIds
   }
 
   /**
