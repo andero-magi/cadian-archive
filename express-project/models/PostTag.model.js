@@ -16,7 +16,8 @@ export function initPostTagModel(sequelize) {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrementIdentity: true
+        autoIncrementIdentity: true,
+        autoIncrement: true
       },
       tag_id: {
         type: DataTypes.STRING,

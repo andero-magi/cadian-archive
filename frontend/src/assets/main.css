@@ -5,3 +5,13 @@
 .bg-darker {
   background-color: var(--mat-dark-1);
 }
+
+.posttag {
+  border: 1px solid white;
+  border-radius: 0.33cm;
+  background-color: rgb(33 37 41);
+
+  &:hover {
+    background-color: rgb(55, 61, 66);
+  }
+}
