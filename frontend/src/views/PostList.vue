@@ -2,7 +2,7 @@
   <div class="d-block w-100 my-5">
     <div class="flex-column p-4 bg-darker mx-auto" style="width: 90%; height: 80vh;">
       <div v-for="post in foundPosts">
-        {{ post.id }}
+        <RouterLink :to="{name: 'post', params: {id: post.id}}">{{ post.id }}</RouterLink>
       </div>
     </div>
   </div>
@@ -26,11 +26,6 @@ async function reloadShit() {
 }
 
 async function doPostSearch(queryParam) {
-  if (queryParam == "") {
-    foundPosts.value = []
-    return
-  }
-
   let queryUrl = `${API_URL}/posts?search=${encodeURIComponent(queryParam)}`
   console.log(`queryUrl=${queryUrl}`) 
 
