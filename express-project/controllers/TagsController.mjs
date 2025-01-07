@@ -1,5 +1,7 @@
 import TagService from "../tag-service.js"
 import e from "express"
+import { TagSearch } from "../tags-parser.js"
+import { PostTag } from "../models/PostTag.model.js"
 
 export class TagsController {
   #tagService

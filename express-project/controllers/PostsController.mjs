@@ -6,6 +6,7 @@ import ImagesService from "../image-service.js"
 import TagService from "../tag-service.js"
 import * as tagsParser from "../tags-parser.js"
 import { Post } from "../models/Post.model.js"
+import { getServer } from "../index.js"
 
 // Define post schemas
 export const PostShape = yup.object().shape({
@@ -49,15 +50,11 @@ export class PostsController {
       searchExpr = tagsParser.parseTags(search)
     }
 
-    let postArray = await this.#posts.searchPosts(searchExpr)
-    let arr = []
+    let tagSearches = searchExpr.filter(p => p instanceof tagsParser.TagSearch)
+    let matchingIds = await this.#tagService.findPostsByLinkedTags(tagSearches)
+    let posts = await matchingIds.map(async (v) => await this.#posts.getPostById(v))
 
-    for (let p of postArray) {
-      let api = await toApiObject(p, this.#tagService)
-      arr.push(api)
-    }
-    
-    res.status(200).send(arr)
+    res.status(200).send(posts)
   }
 
   /**
@@ -124,7 +121,7 @@ export class PostsController {
       return 
     }
   
-    return res.status(200).send(await toApiObject(post, this.#tagService))
+    return res.status(200).send(await toApiObject(getBaseUrl(req), post, this.#tagService))
   }
 
   /**
@@ -157,7 +154,7 @@ export class PostsController {
     await processTags(j.tags, existing, this.#tagService)
   
     let newObj = await this.#posts.modifyPost(id, j)
-    res.status(200).send(await toApiObject(newObj, this.#tagService))
+    res.status(200).send(await toApiObject(getBaseUrl(req), newObj, this.#tagService))
   }
 }
 
@@ -190,18 +187,35 @@ async function ensureTagsExist(tagService, tags) {
  * @param {Post} post 
  * @param {TagService} tagService 
  */
-async function toApiObject(post, tagService) {
+async function toApiObject(baseUrl, post, tagService) {
   let tags = await tagService.getLinkedTags(post)
   let tagNameArray = tags.map(t => t.id)
+
+  let content = post.content
 
   return {
     id: post.id,
     author_id: post.author_id,
     modified_date: post.modified_date,
     upload_date: post.upload_date,
-    content: post.content,
+    content: content,
     tags: tagNameArray
   }
+}
+
+/**
+ * Gets the base URL used for the request.
+ * @param {express.Request} req Request
+ * @returns {string} Base URL
+ */
+function getBaseUrl(req) {
+  let prot = req.protocol
+  let host = req.host
+  
+  let server = getServer()
+  let port = server.address().port
+
+  return `${prot}://${host}:${port}`
 }
 
 /**
@@ -216,6 +230,10 @@ async function toApiObject(post, tagService) {
  */
 async function tryValidate(req, res) {
   let j = req.body
+
+  console.log(j)
+  console.log(typeof j)
+  console.log(j.author_id)
 
   try {
     j = await PostShape.validate(j)
