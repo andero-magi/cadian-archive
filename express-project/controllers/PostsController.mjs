@@ -71,9 +71,12 @@ export class PostsController {
       return
     }
 
+    if (!(await processImages(req, res, this.#images, j.content))) {
+      return
+    }
+
     await ensureTagsExist(this.#tagService, j.tags)
-    await processImages(this.#images, j.content)
-  
+
     let created = await this.#posts.createPost(j)
 
     await processTags(j.tags, created, this.#tagService)
@@ -146,8 +149,11 @@ export class PostsController {
       return
     }
   
+    if (!(await processImages(req, res, this.#images, existing.content))) {
+      return
+    }
+
     await ensureTagsExist(this.#tagService, j.tags)
-    await processImages(this.#images, existing.content)
     await processTags(j.tags, existing, this.#tagService)
   
     let newObj = await this.#posts.modifyPost(id, j)
@@ -235,10 +241,13 @@ async function tryValidate(req, res) {
  * them to the internal service, replacing the imagedata values
  * with imagerefs.
  * 
+ * @param {express.Request} req Request
+ * @param {express.Response} res Request
  * @param {any[]} j content array
  * @param {ImagesService} images 
+ * @returns {Promise<boolean>}
  */
-async function processImages(images, contentArray) {
+async function processImages(req, res, images, contentArray) {
   if (contentArray == null) {
     return
   }
@@ -249,10 +258,35 @@ async function processImages(images, contentArray) {
       continue
     }
 
-    let uploadedId = await images.uploadImage(c.data, c.image_type ?? "jpeg")
-    c.data = uploadedId
-    c.type = "imageref"
+    const prefix = "data:"
+    const suffix = ";base64,"
+
+    let data = String(c.data)
+    let idx = data.indexOf(suffix)
+
+    if (!data.startsWith(prefix) || idx == -1) {
+      req.status(400).send({error: "imagedata is not a base64 encoded string"})
+      return false
+    }
+
+    let mimeType = data.substring(prefix.length, idx)
+    if (!mimeType.startsWith("image/")) {
+      req.status(400).send({error: "imagedata does not have image mime type"})
+      return false
+    }
+
+    let base64Data = data.substring(idx + suffix.length)
+    let imgId = await images.uploadImage(base64Data, mimeType)
+
+    let ndata = {
+      type: "imageref",
+      data: imgId
+    }
+
+    contentArray[i] = ndata
   }
+
+  return true
 }
 
 /**
