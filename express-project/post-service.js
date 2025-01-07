@@ -30,6 +30,8 @@ export default class PostsService {
     let result = []
     let posts = await Post.findAll()
 
+    return posts
+
     outer: for (let uuid in posts) {
       let post = posts[uuid]
 
@@ -53,8 +55,6 @@ export default class PostsService {
         this.#sortBy(result, p => p.upload_date)
       }
     }
-
-    console.log(result)
     
     return result
   }

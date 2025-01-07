@@ -11,7 +11,7 @@ import PostTags from "./components/PostTags.vue"
 
   <div class="d-flex align-items-start w-100">
     <leftsidebar />
-    <RouterView />
+    <Suspense><RouterView /></Suspense>
   </div>
 </template>
 
