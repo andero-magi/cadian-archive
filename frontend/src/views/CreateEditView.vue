@@ -1,16 +1,23 @@
 <script setup lang="ts">
+import SingleTag from '@/components/SingleTag.vue';
+import TagEdit from '@/components/TagEdit.vue';
+import TagSearchBar from '@/components/TagSearchBar.vue';
 import { API_URL } from '@/consts';
+import { Content, Post } from '@/post';
 import router from '@/router';
+import { FieldSearch, TagSearch } from '@/utilities/tags-parser';
 import { getPost } from '@/utils';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
 const props = defineProps(["edit"])
-const post = ref()
+const post = ref<Post>()
+const tags = ref<TagSearch[]>([])
 const postingErrors = ref([])
 
 const editMode = props.edit ?? false
+const title = editMode ? "Edit Post" : "New Post"
 
 type TextContentElement = "section" | "header" | "title"
 
@@ -18,8 +25,9 @@ if (editMode) {
   let id: string = route.params.id as string
   let postData = await getPost(id)
   post.value = postData
+  refreshTagsRef()
 } else {
-  let contentArr: any[] = [
+  let contentArr: Content[] = [
     { type: "title", data: "" },
     { type: "section", data: "" }
   ]
@@ -29,8 +37,12 @@ if (editMode) {
   post.value.content = contentArr
 }
 
+function refreshTagsRef() {
+  tags.value = post.value.tags.map(t => new TagSearch(t))
+}
+
 // Sanitize data a bit, drop empty tags and content
-function scrubPost(data: any): any {
+function scrubPost(data: Post): Post {
   let tagsOut = []
   let contentOut = []
 
@@ -54,11 +66,11 @@ function scrubPost(data: any): any {
   // Only include non empty tags
   if (data.tags) {
     for (let tag of data.tags) {
-      if (!tag || tag == "") {
+      if (!tag) {
         continue
       }
 
-      tagsOut.push(tag)
+      tagsOut.push(tag.toString())
     }
   }
 
@@ -74,9 +86,9 @@ function scrubPost(data: any): any {
 }
 
 // Ensures data is valid :)
-function validatePost(data): string[] {
-  let c: any[] = data.content
-  let t: any[] = data.tags
+function validatePost(data: Post): string[] {
+  let c: Content[] = data.content
+  let t: string[] = data.tags
   
   let errors: string[] = []
 
@@ -98,7 +110,7 @@ async function postPost() {
 
   if (errors.length > 0) {
     postingErrors.value = errors
-    //return
+    return
   }
 
   let method: string = editMode ? "PUT" : "POST"
@@ -213,7 +225,7 @@ async function submitImage(event: MouseEvent): Promise<void> {
 
     let base64 = await loadImage(file)
 
-    let contentData = {
+    let contentData: Content = {
       type: 'imagedata',
       data: base64
     }
@@ -232,6 +244,8 @@ async function submitImage(event: MouseEvent): Promise<void> {
 <template>
   <div class="d-flex justify-content-center" style="width: 100%;">
     <div id="content-output" class="rounded mt-5 p-4 bg-darker" style="width: 90%; min-height: 50vh;">
+      <h1>{{ title }}</h1>
+
       <div class="text-danger mb-3" v-if="postingErrors.length > 0">
         <h5 class="mb-2">Errors</h5>
         <ul>
@@ -239,27 +253,45 @@ async function submitImage(event: MouseEvent): Promise<void> {
         </ul>
       </div>
 
+      <h3 class="mt-4">Edit Content</h3>
+
       <div v-for="(section, idx) in post.content" class="d-flex justify-content-between align-items-center p-3 mb-3 gap-2">
         <div>
           <button @click="moveInDirection(idx, -1)" class="hover-white unstyled-button"><i class="bi bi-arrow-up"></i></button>
           <button @click="moveInDirection(idx,  1)" class="hover-white unstyled-button"><i class="bi bi-arrow-down"></i></button>
         </div>
 
-        <template v-if="section.type == 'title'">
-          <input placeholder="Enter title here..." v-model="section.data" class="w-100 d-block h1 p-2 mb-0"/>
-        </template>
-        <template v-if="section.type == 'section'">
-          <textarea placeholder="Enter text here..." class="d-block p-2 w-100 mb-0" style="height: max-content; min-height: max-content; overflow-y: visible; field-sizing: content;" v-model="section.data"></textarea>
-        </template>
-        <template v-if="section.type == 'header'">
-          <input placeholder="Enter paragraph title here..." class="d-block h3 p-2 w-100 mb-0"v-model="section.data" />
-        </template>
-        <template v-if="section.type == 'imagedata'">
-          <img style="width: 80%;" :src="section.data" alt="">
-        </template>
-        <template v-if="section.type == 'imageref'">
-          <img style="width: 80%;" :src="API_URL + '/images/' + section.data" alt="">
-        </template>
+        <input 
+          v-if="section.type == 'title'" 
+          placeholder="Enter title here..." 
+          v-model="section.data" 
+          class="w-100 d-block h1 p-2 mb-0"
+        />
+        <textarea 
+          v-if="section.type == 'section'" 
+          placeholder="Enter text here..." 
+          class="d-block p-2 w-100 mb-0 editsection" 
+          v-model="section.data"
+        >
+        </textarea>
+        <input 
+          v-if="section.type == 'header'" 
+          placeholder="Enter paragraph title here..." 
+          class="d-block h3 p-2 w-100 mb-0" 
+          v-model="section.data" 
+        />
+        <img 
+          v-if="section.type == 'imagedata'" 
+          class="editimg" 
+          :src="section.data" 
+          alt=""
+        >
+        <img 
+          v-if="section.type == 'imageref'" 
+          class="editimg" 
+          :src="API_URL + '/images/' + section.data"
+          alt=""
+        >
 
         <button @click="removeElement(idx)" class="hover-white align-self-stretch unstyled-button">&#10005;</button>
       </div>
@@ -276,8 +308,13 @@ async function submitImage(event: MouseEvent): Promise<void> {
             <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#fileModal" href="#">New image...</a></li>
           </ul>
         </div>
-        <button class="btn btn-primary" @click="postPost">Submit</button>
       </div>
+
+      <div class="mt-4">
+        <TagEdit :post="post" />
+      </div>
+
+      <button class="btn btn-primary mt-5" @click="postPost">Submit</button>
     </div>
   </div>
 
@@ -314,5 +351,15 @@ async function submitImage(event: MouseEvent): Promise<void> {
   &:hover {
     color: white;
   }
+}
+
+.editimg {
+  max-width: 90%;
+}
+.editsection {
+  height: max-content; 
+  min-height: max-content; 
+  overflow-y: visible; 
+  field-sizing: content;
 }
 </style>
