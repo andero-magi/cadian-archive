@@ -1,55 +1,28 @@
 <script setup>
-import { onMounted } from 'vue';
+import { API_URL } from '@/consts';
 
 const props = defineProps(["post"])
-const currentPost = props.post
-
-onMounted(() => {
-  renderPostContent()
-})
-
-function renderPostContent() {
-  const element = document.getElementById("content-output")
-
-  if (!element || !currentPost) {
-    return
-  }
-
-  let content = currentPost.content
-
-  for (let c of content) {
-    let type = c.type
-
-    if (type == 'header' || type == "title" || type == "section") {
-      let tagName
-    
-      if (type == "header") {
-        tagName = "h2"
-      } else if (type == "title") {
-        tagName = "h1"
-      } else  {
-        tagName = "p"
-      }
-
-      let h2 = document.createElement(tagName)
-      h2.textContent = c.data
-      element.appendChild(h2)
-
-      continue
-    }
-
-    // type = imageref
-    let img = document.createElement("img")
-    img.src = `http://localhost:8080/images/${c.data}`
-    img.style.maxWidth = "90%"
-    element.appendChild(img)
-  }
-}
+const currentPost = props.post;
 
 </script>
 
 <template>
-  <div id="content-output" class="rounded mt-5 p-4 bg-darker" style="width: 90%; min-height: 50vh;">
-    
+  <div class="rounded mt-5 p-4 bg-darker" style="width: 90%; min-height: 50vh;">
+    <template v-for="sect in currentPost.content">
+      <h1 v-if="sect.type == 'title'">{{ sect.data }}</h1>
+      <h3 v-if="sect.type == 'header'">{{ sect.data }}</h3>
+      <p v-if="sect.type == 'section'">{{ sect.data }}</p>
+      <img class="postimg" v-if="sect.type == 'imagedata'" :src="sect.data"/>
+      <img class="postimg" v-if="sect.type == 'imageref'" :src="`${API_URL}/images/${sect.data}`"/>
+    </template>
   </div>
 </template>
+
+<style>
+.postimg {
+  max-width: 95%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
