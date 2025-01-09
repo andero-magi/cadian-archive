@@ -47,10 +47,13 @@ function onDropdownClick(ev: MouseEvent) {
         <dd>{{ currentPost.author_id }}</dd>
 
         <dt>Upload Date</dt>
-        <dd>{{ currentPost.upload_date.toUTCString() }}</dd>
+        <dd>{{ currentPost.upload_date }}</dd>
 
         <dt>Modified Date</dt>
-        <dd>{{ currentPost.modified_date.toUTCString() }}</dd>
+        <dd>{{ currentPost.modified_date }}</dd>
+
+        <dt>Post UUID</dt>
+        <dd>{{ currentPost.id }}</dd>
       </dl>
     </div>
 
