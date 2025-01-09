@@ -1,12 +1,12 @@
 <template>
   <div class="sticky-top d-flex flex-column flex-shrink-0 p-3 text-white bg-darker" style="width: 280px; height: 100vh;">
     <h5 class="mb-4">Search</h5>
-    <form @submit.prevent="onSearch">
-      <input v-model="searchString" class="form-control" placeholder="Search"/>
-      <div>
-        <button type="submit" class="btn btn-primary mt-2">Search...</button>
-      </div>
-    </form>
+
+    <div>
+      <Suspense><TagSearchBar :omit-button="true"/></Suspense>
+      <button class="btn btn-primary mt-2" @click="onSearch">Search...</button>
+    </div>
+
 
     <h5 class="my-4">Searched Tags</h5>
     <div id="searched-tags-container">
@@ -31,6 +31,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { SEARCH_ADD_EVENT, SEARCH_EXCLUDE_EVENT, SEARCH_REMOVE_EVENT, SEARCH_SET_EVENT } from '@/consts';
 import { useRoute } from 'vue-router';
 import { FieldSearch, parseTags, TagSearch } from '@/utilities/tags-parser';
+import TagSearchBar from './TagSearchBar.vue';
 
 const route = useRoute()
 
