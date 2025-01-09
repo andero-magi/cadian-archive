@@ -13,26 +13,32 @@ export default class TagService {
   /**
    * Find posts by the tags linked to them
    * @param {TagSearch[]} searchTags 
+   * @param {number} [page=0] Page number starting at 0
+   * @param {number} [pageSize=20] Page size
    * @returns {Promise<Set<string>>} A set of post IDs that match the query
    */
-  async findPostsByLinkedTags(searchTags) {
-    let positiveTags = []
-    let negatedTags = []
-
-    for (let s of searchTags) {
-      if (s.negated) {
-        negatedTags.push(s.tagName)
-      } else {
-        positiveTags.push(s.tagName)
-      }
-    }
-
+  async findPostsByLinkedTags(searchTags, page = 0, pageSize = 20) {
     let andOps = []
-    if (negatedTags.length > 0) {
-      andOps.push({id: {[Op.notIn]: negatedTags}})
-    }
-    if (positiveTags.length > 0) {
-      andOps.push({id: {[Op.in]: positiveTags}})
+
+    // If there are tags to look for, then combine the 
+    if (searchTags.length > 0) {
+      let positiveTags = []
+      let negatedTags = []
+  
+      for (let s of searchTags) {
+        if (s.negated) {
+          negatedTags.push(s.tagName)
+        } else {
+          positiveTags.push(s.tagName)
+        }
+      }
+  
+      if (negatedTags.length > 0) {
+        andOps.push({tag_id: {[Op.notIn]: negatedTags}})
+      }
+      if (positiveTags.length > 0) {
+        andOps.push({tag_id: {[Op.in]: positiveTags}})
+      }
     }
 
     let matching
@@ -40,8 +46,7 @@ export default class TagService {
     if (andOps.length > 0) {
       matching = await PostTag.findAll(
         {
-          where: {[Op.and]: [andOps]},
-          group: 'post_id',
+          where: {[Op.and]: andOps},
           // attributes: [
           //   [Sequelize.fn("DISTINCT")]
           // ]

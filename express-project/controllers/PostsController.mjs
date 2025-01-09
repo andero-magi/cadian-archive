@@ -52,7 +52,12 @@ export class PostsController {
 
     let tagSearches = searchExpr.filter(p => p instanceof tagsParser.TagSearch)
     let matchingIds = await this.#tagService.findPostsByLinkedTags(tagSearches)
-    let posts = await matchingIds.map(async (v) => await this.#posts.getPostById(v))
+    let posts = []
+    
+    for (let postId of matchingIds) {
+      let post = await this.#posts.getPostById(postId)
+      posts.push(post)
+    }
 
     res.status(200).send(posts)
   }
