@@ -1,7 +1,7 @@
 <template>
   <form class="d-flex gap-3" @submit.prevent="onSubmitTag">
     <input 
-      placeholder="Search for tags..." 
+      placeholder="Search for a tag..." 
       class="form-control taginput" 
       type="text" 
       v-model="taginput"
@@ -9,7 +9,10 @@
       @focus="suggestionsVisible = true" 
       @blur="suggestionsVisible = false"
     >
-    <button v-if="!omitButton" type="submit" class="btn btn-primary">Submit</button>
+    <button v-if="buttonType != 'none'" type="submit" class="btn btn-primary">
+      <template v-if="buttonType == 'submit'">Submit</template>
+      <template v-else>Search...</template>
+    </button>
   </form>
 
   <div @onclick="onSuggestionClick" class="tagsuggests" v-if="suggestionsVisible">
@@ -34,8 +37,10 @@ interface TagSuggestion {
   alias_for?: string
 }
 
-const props = defineProps<{omitButton?: boolean}>()
-const omitButton = props.omitButton ?? false
+type ButtonType = "submit" | "search" | "none"
+
+const props = defineProps<{button?: ButtonType}>()
+const buttonType: ButtonType = props.button ?? "submit"
 
 const emit = defineEmits<{
   'tag-submit': [tag: TagSearch]
