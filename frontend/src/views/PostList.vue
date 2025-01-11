@@ -1,6 +1,6 @@
 <template> 
   <div class="d-block w-100 my-5">
-    <div class="d-flex align-items-start flex-wrap flex-row gap-3 p-4 bg-darker mx-auto" style="width: 90%; height: 80vh;">
+    <div class="d-flex align-items-start flex-wrap flex-row gap-3 p-4 bg-darker mx-auto" style="width: 90%; min-height: 80vh;">
       <RouterLink :to="{name: 'post', params: {id: post.id}, query: {...route.query}}" class="card postcard" v-for="post in foundPosts">
         <template v-for="c in post.content">
           <h5 v-if="c.type == 'title'" class="card-title">{{ c.data }}</h5>
@@ -76,5 +76,7 @@ async function doPostSearch(queryParam) {
   width: 250px;
   padding: 10px;
   text-decoration: none;
+  max-height: 430px;
+  overflow-y: hidden;
 }
 </style>
