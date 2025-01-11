@@ -1,9 +1,7 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import topbar from "./components/topbar.vue"
 import leftsidebar from "./components/leftsidebar.vue"
-import PageContent from "./components/PageContent.vue"
-import PostTags from "./components/PostTags.vue"
 </script>
 
 <template>
