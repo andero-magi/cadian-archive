@@ -3,8 +3,7 @@
     <h5 class="mb-4">Search</h5>
 
     <div>
-      <Suspense><TagSearchBar :omit-button="true"/></Suspense>
-      <button class="btn btn-primary mt-2" @click="onSearch">Search...</button>
+      <Suspense><TagSearchBar :button="'none'"/></Suspense>
     </div>
 
 
