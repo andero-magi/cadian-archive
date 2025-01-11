@@ -1,4 +1,5 @@
 <script setup>
+import TagSearchBar from '@/components/TagSearchBar.vue';
 import router from '@/router';
 import { ref } from 'vue';
 
@@ -14,10 +15,9 @@ function onSearch(ev) {
     <div class="d-flex items-center justify-content-center flex-column p-4 bg-darker mx-auto" style="width: 90%; height: 80vh;">
       <div class="d-block">
         <h1 class="text-center">Cadian Archive</h1>
-        <form @submit.prevent="onSearch" class="d-flex mt-5 gap-4 justify-content-center">
-          <input v-model="searchStr" style="max-width: 400px;" class="form-control" placeholder="search">
-          <button type="submit" class="btn btn-primary">Search</button>
-        </form>
+        <div style="max-width: 50%;" class="mx-auto">
+          <TagSearchBar :button="'search'"/>
+        </div>
       </div>
     </div>
   </div>
