@@ -85,6 +85,37 @@ function scrubPost(data: Post): Post {
   return postData
 }
 
+function onTextPaste(idx: number, event: ClipboardEvent): void {
+  let textData = event.clipboardData.getData('text')
+  if (textData == "") {
+    return
+  }
+
+  let split = textData.split(/\n\s*\n/g)
+  if (split.length < 2) {
+    return
+  }
+
+  event.preventDefault()
+  post.value.content.splice(idx, 1)
+
+  for (let p of split) {
+    p = p.trim()
+
+    if (p == "") {
+      continue
+    }
+
+    let sect: Content = {
+      type: 'section',
+      data: p
+    }
+
+    post.value.content.splice(idx, 0, sect)
+    idx++
+  }
+}
+
 // Ensures data is valid :)
 function validatePost(data: Post): string[] {
   let c: Content[] = data.content
@@ -157,9 +188,13 @@ function addNewElement(type: TextContentElement) {
 
 // Called when a player moves an element up or down with the arrows left 
 // of the content section
-function moveInDirection(idx: number, dir: number): void {
+function moveInDirection(idx: number, dir: number, ev: MouseEvent): void {
   let content: any[] = post.value.content
   let nidx = idx + dir
+
+  if (ev.shiftKey) {
+    nidx = dir == 1 ? content.length - 1 : 0
+  }
 
   if (idx < 0 || idx > content.length) {
     return
@@ -257,8 +292,8 @@ async function submitImage(event: MouseEvent): Promise<void> {
 
       <div v-for="(section, idx) in post.content" class="d-flex justify-content-between align-items-center p-3 mb-3 gap-2">
         <div>
-          <button @click="moveInDirection(idx, -1)" class="hover-white unstyled-button"><i class="bi bi-arrow-up"></i></button>
-          <button @click="moveInDirection(idx,  1)" class="hover-white unstyled-button"><i class="bi bi-arrow-down"></i></button>
+          <button @click="ev => moveInDirection(idx, -1, ev)" class="hover-white unstyled-button"><i class="bi bi-arrow-up"></i></button>
+          <button @click="ev => moveInDirection(idx,  1, ev)" class="hover-white unstyled-button"><i class="bi bi-arrow-down"></i></button>
         </div>
 
         <input 
@@ -272,6 +307,7 @@ async function submitImage(event: MouseEvent): Promise<void> {
           placeholder="Enter text here..." 
           class="d-block p-2 w-100 mb-0 editsection" 
           v-model="section.data"
+          @paste="ev => onTextPaste(idx, ev)"
         >
         </textarea>
         <input 
