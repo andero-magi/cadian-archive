@@ -103,9 +103,20 @@ export class PostsController {
       res.status(404).send({error: `Post with UUID ${id} not found`})
       return 
     }
-  
+
+    let content = post.content
+    for (let sect of content) {
+      if (sect.type != "imageref") {
+        continue
+      }
+
+      await this.#images.deleteImage(sect.data)
+    }
+
+    await this.#tagService.clearLinkedTags(post.id)
     await this.#posts.deletePost(id)
-    res.status(200).send({message: "Successfully deleted post"})
+
+    res.status(200).send({message: `Successfully deleted post ${id}`})
   }
 
   /**

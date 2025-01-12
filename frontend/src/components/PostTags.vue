@@ -1,28 +1,3 @@
-<script lang="ts" setup>
-import { ref } from 'vue';
-
-const props = defineProps(["post"])
-const currentPost = ref()
-
-currentPost.value = props.post
-
-function onDropdownClick(ev: MouseEvent) {
-  let target: HTMLElement = ev.target as HTMLElement
-  let tag = target.getAttribute("tag")
-  let tagAct = target.getAttribute("tag-act")
-
-  if (!tag || !tagAct) {
-    return
-  }
-
-  ev.preventDefault()
-  let evType = `tag${tagAct}`
-
-  let event = new CustomEvent(evType, {detail: tag})
-  document.body.dispatchEvent(event)
-}
-</script>
-
 <template>
   <div class="sticky-top d-flex flex-column flex-shrink-0 p-3 text-white bg-darker" style="width: 280px; height: 100vh;">
     <h5 class="mb-4">Post Tags</h5>
@@ -62,11 +37,70 @@ function onDropdownClick(ev: MouseEvent) {
       Edit Post
     </RouterLink>
     
-    <RouterLink class="btn btn-outline-danger mt-2" :to="{name: 'editpost', params: {id: currentPost.id}}">
+    <button class="btn btn-outline-danger mt-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
       Delete Post
-    </RouterLink>
+    </button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteModalLabel">Delete post?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Deleting this post will erase all content associated with the post.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button @click="deletePost" data-bs-dismiss="modal" type="button" class="btn btn-danger">Delete post</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
+<script lang="ts" setup>
+import { API_URL } from '@/consts';
+import { Post } from '@/post';
+import router from '@/router';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute()
+
+const props = defineProps(["post"])
+const currentPost = ref<Post>()
+
+currentPost.value = props.post
+
+function onDropdownClick(ev: MouseEvent) {
+  let target: HTMLElement = ev.target as HTMLElement
+  let tag = target.getAttribute("tag")
+  let tagAct = target.getAttribute("tag-act")
+
+  if (!tag || !tagAct) {
+    return
+  }
+
+  ev.preventDefault()
+  let evType = `tag${tagAct}`
+
+  let event = new CustomEvent(evType, {detail: tag})
+  document.body.dispatchEvent(event)
+}
+
+async function deletePost(): Promise<void> {
+  let apiUrl = `${API_URL}/posts/${currentPost.value.id}`
+  let response = await fetch(apiUrl, {method: "DELETE"})
+
+  console.log(response)
+
+  router.push({name: 'post-list', query: {...route.query}})
+}
+</script>
 
 <style lang="css" scoped>
 .uuid {

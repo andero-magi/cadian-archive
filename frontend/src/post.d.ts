@@ -7,8 +7,9 @@ export interface Content {
 
 export interface Post {
   id?: string
+  author_id?: string
   content?: Content[]
-  tags?: string[],
+  tags?: string[]
   upload_date?: string
   modified_date?: string
 }

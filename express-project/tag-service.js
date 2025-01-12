@@ -10,6 +10,10 @@ export default class TagService {
 
   }
 
+  async clearLinkedTags(postId) {
+    await PostTag.destroy({where: {post_id: postId}})
+  }
+
   /**
    * Find posts by the tags linked to them
    * @param {TagSearch[]} searchTags 
