@@ -1,4 +1,6 @@
 <template> 
+  <Leftsidebar/>
+  
   <div class="d-block w-100 my-5">
     <div class="d-flex align-items-start flex-wrap flex-row gap-3 p-4 bg-darker mx-auto" style="width: 90%; min-height: 80vh;">
       <RouterLink :to="{name: 'post', params: {id: post.id}, query: {...route.query}}" class="card postcard" v-for="post in foundPosts">
@@ -20,6 +22,7 @@ import { useRoute } from 'vue-router';
 import { API_URL } from '@/consts';
 import router from '@/router';
 import { Content, Post } from '@/post';
+import Leftsidebar from '@/components/leftsidebar.vue';
 
 let route = useRoute()
 let foundPosts = ref<Post[]>([]);

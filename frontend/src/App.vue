@@ -8,7 +8,6 @@ import leftsidebar from "./components/leftsidebar.vue"
   <topbar />
 
   <div class="d-flex align-items-start w-100">
-    <leftsidebar />
     <Suspense><RouterView /></Suspense>
   </div>
 </template>
