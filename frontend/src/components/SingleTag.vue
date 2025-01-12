@@ -4,7 +4,7 @@
       tag
       :tag-negated="tag.negated"
       @click="onTagClicked"
-      class="d-flex justify-content-between bg-dark rounded-pill px-3 py-1 border m-1"
+      :class="'d-flex justify-content-between bg-dark rounded-pill px-3 py-1 border m-1' + (fullwidth ? ' tsb-full-width' : '')"
       :data-bs-toggle="dropdown ? 'dropdown' : null"
       :aria-expanded="dropdown ? 'false' : null"
 
@@ -37,11 +37,13 @@ const props = defineProps<{
   tag: SearchTerm
   dropdown?: boolean
   removecross?: boolean
+  fullwidth?: boolean
 }>()
 
 const tag = ref(props.tag)
 const dropdown = props.dropdown ?? false
 const removecross = props.removecross ?? false
+const fullwidth = props.fullwidth ?? false
 
 function onTagClicked(event: MouseEvent): void {
   let el = event.target as HTMLElement
@@ -78,6 +80,9 @@ function onDropdownClick(ev: MouseEvent) {
   &:hover {
     cursor: pointer;
     border-color: var(--bs-primary) !important;
+  }
+
+  &:hover span {
     text-decoration: line-through;
   }
 
@@ -94,5 +99,9 @@ function onDropdownClick(ev: MouseEvent) {
   &:hover {
     color: gray;
   }
+}
+
+.tsb-full-width {
+  width: 100%;
 }
 </style>
