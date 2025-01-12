@@ -26,6 +26,7 @@ import { useRoute } from 'vue-router';
 import { FieldSearch, parseTags, TagSearch } from '@/utilities/tags-parser';
 import TagSearchBar from './TagSearchBar.vue';
 import SingleTag from './SingleTag.vue';
+import { searchTermsToString } from '@/utils';
 
 const route = useRoute()
 
@@ -60,14 +61,7 @@ function onSearch() {
 }
 
 function tagListToString() {
-  let newStr = ""
-  for (let tag of tagList.value) {
-    if (tag.negated) {
-      newStr += "-"
-    }
-    newStr += tag.toString() + " "
-  }
-  return newStr.trim()
+  return searchTermsToString(tagList.value)
 }
 
 function runSearch() {
