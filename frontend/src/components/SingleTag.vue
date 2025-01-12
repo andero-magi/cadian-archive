@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { FieldSearch, TagSearch } from '@/utilities/tags-parser';
+import { searchTermsToString } from '@/utils';
 import { ref } from 'vue';
 
 type SearchTerm = TagSearch | FieldSearch
@@ -69,7 +70,7 @@ function onDropdownClick(ev: MouseEvent) {
   ev.preventDefault()
   let evType = `tag${tagAct}`
 
-  let event = new CustomEvent(evType, {detail: tag.toString()})
+  let event = new CustomEvent(evType, {detail: tag.value.toPrettyString()})
   document.body.dispatchEvent(event)
 }
 
