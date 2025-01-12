@@ -10,7 +10,7 @@
 
       type="button"
     >
-      <span>{{ tag.toPrettyString() }}</span>
+      <span :class="dropdown ? ' dropdown-toggle' : null">{{ tag.toPrettyString() }}</span>
       <button v-if="removecross" class="tag-negate-toggle">&#10005;</button>
     </button>
 
@@ -80,9 +80,10 @@ function onDropdownClick(ev: MouseEvent) {
   &:hover {
     cursor: pointer;
     border-color: var(--bs-primary) !important;
+    background-color: rgb(55, 61, 66) !important;
   }
 
-  &:hover span {
+  &:not([data-bs-toggle]):hover span {
     text-decoration: line-through;
   }
 
