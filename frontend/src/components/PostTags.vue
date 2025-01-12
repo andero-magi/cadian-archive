@@ -44,7 +44,7 @@ function onDropdownClick(ev: MouseEvent) {
     <div>
       <dl>
         <dt>Uploader</dt>
-        <dd>{{ currentPost.author_id }}</dd>
+        <dd class="uuid">{{ currentPost.author_id }}</dd>
 
         <dt>Upload Date</dt>
         <dd>{{ currentPost.upload_date }}</dd>
@@ -53,7 +53,7 @@ function onDropdownClick(ev: MouseEvent) {
         <dd>{{ currentPost.modified_date }}</dd>
 
         <dt>Post UUID</dt>
-        <dd>{{ currentPost.id }}</dd>
+        <dd class="uuid">{{ currentPost.id }}</dd>
       </dl>
     </div>
 
@@ -67,3 +67,9 @@ function onDropdownClick(ev: MouseEvent) {
     </RouterLink>
   </div>
 </template>
+
+<style lang="css" scoped>
+.uuid {
+  font-size: 80%;
+}
+</style>
