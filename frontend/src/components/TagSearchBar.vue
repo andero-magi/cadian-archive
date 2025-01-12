@@ -6,8 +6,8 @@
       type="text" 
       v-model="taginput"
       @input="onInputTyped"
-      @focus="suggestionsVisible = true" 
-      @blur="suggestionsVisible = false"
+      @focus="onFocusSearchbar" 
+      @blur="onBlurSearchbar"
     >
     <button v-if="buttonType != 'none'" type="submit" class="btn btn-primary">
       <template v-if="buttonType == 'submit'">Submit</template>
@@ -15,7 +15,7 @@
     </button>
   </form>
 
-  <div @onclick="onSuggestionClick" class="tagsuggests" v-if="suggestionsVisible">
+  <div @click="onSuggestionClick" class="tagsuggests" v-if="suggestionsVisible">
     <div :tag-name="tag.name" class="suggestion-item" v-for="tag in tags">
       <template v-if="tag.alias_for">
         {{ tag.name }} <span class="text-muted">&rarr;</span> {{ tag.alias_for }}
@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { API_URL } from '@/consts';
-import { TagSearch } from '@/utilities/tags-parser';
+import { FieldSearch, TagSearch } from '@/utilities/tags-parser';
 import { ref } from 'vue';
 
 interface TagSuggestion {
@@ -38,12 +38,18 @@ interface TagSuggestion {
 }
 
 type ButtonType = "submit" | "search" | "none"
+type AcceptingSearch = "search" | "onlytags"
 
-const props = defineProps<{button?: ButtonType}>()
+const props = defineProps<{
+  button?: ButtonType,
+  accepting?: AcceptingSearch
+}>()
+
 const buttonType: ButtonType = props.button ?? "submit"
+const accepts : AcceptingSearch = props.accepting ?? "search"
 
 const emit = defineEmits<{
-  'tag-submit': [tag: TagSearch]
+  'tag-submit': [tag: TagSearch | FieldSearch]
 }>()
 
 const tags = ref<TagSuggestion[]>([])
@@ -52,7 +58,34 @@ const taginput = ref<string>("")
 
 const existingTags: TagSuggestion[] = []
 
+let blurTimeoutId: number = 0
+
 await queryExistingTags()
+
+function onBlurSearchbar() {
+  if (blurTimeoutId != 0) {
+    return
+  }
+
+  // Ignore TS error here, it thinks we're in NodeJS (we kinda are)
+  // but we're actually running on the browser, so timeout returns a 
+  // number ID instead of a handle object
+  blurTimeoutId = setTimeout(() => {
+    suggestionsVisible.value = false
+    blurTimeoutId = 0
+  }, 100);
+}
+
+function onFocusSearchbar(): void {
+  suggestionsVisible.value = true
+
+  if (blurTimeoutId == 0) {
+    return
+  }
+
+  clearTimeout(blurTimeoutId)
+  blurTimeoutId = 0
+}
 
 function onInputTyped(event: InputEvent): void {
   let el: HTMLInputElement = event.target as HTMLInputElement
@@ -87,6 +120,11 @@ function onSuggestionClick(input: InputEvent): void {
     return
   }
 
+  suggestionsVisible.value = false
+  if (blurTimeoutId != 0) {
+    clearTimeout(blurTimeoutId)
+  }
+
   fireSubmit(tag)
 }
 
@@ -114,7 +152,18 @@ function fireSubmit(tag: string): void {
   emit("tag-submit", obj)
 
   taginput.value = ""
-  tags.value = existingTags
+
+  updateTagSuggestions(existingTags)
+}
+
+function updateTagSuggestions(arr: TagSuggestion[]): void {
+  const maxSuggestions = 10
+
+  if (arr.length > maxSuggestions) {
+    arr = arr.slice(0, maxSuggestions)
+  }
+
+  tags.value = arr
 }
 
 async function queryExistingTags(): Promise<void> {
@@ -139,7 +188,7 @@ async function queryExistingTags(): Promise<void> {
     existingTags.push(data)
   }
 
-  tags.value = existingTags
+  updateTagSuggestions(existingTags)
 }
 </script>
 
