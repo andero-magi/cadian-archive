@@ -4,13 +4,15 @@
   <div class="d-block w-100 my-5">
     <div class="d-flex align-items-start flex-wrap flex-row gap-3 p-4 bg-darker mx-auto" style="width: 90%; min-height: 80vh;">
       <RouterLink :to="{name: 'post', params: {id: post.id}, query: {...route.query}}" class="card postcard" v-for="post in foundPosts">
-        <template v-for="c in post.content">
-          <h5 v-if="c.type == 'title'" class="card-title">{{ c.data }}</h5>
-          <h6 v-if="c.type == 'header'" class="card-subtitle">{{ c.data }}</h6>
-          <img v-if="c.type == 'imageref'" class="card-img" :src="`${API_URL}/images/${c.data}`">
-          <img v-if="c.type == 'imagedata'" class="card-img" :src="c.data">
-          <div v-if="c.type == 'section'" class="card-body card-text">{{ c.data }}</div>
-        </template>
+        <div class="card-body">
+          <template v-for="c in post.content">
+            <h5 v-if="c.type == 'title'" class="card-title mb-3">{{ c.data }}</h5>
+            <h6 v-if="c.type == 'header'" class="card-subtitle mb-3">{{ c.data }}</h6>
+            <img v-if="c.type == 'imageref'" class="card-img" :src="`${API_URL}/images/${c.data}`">
+            <img v-if="c.type == 'imagedata'" class="card-img" :src="c.data">
+            <div v-if="c.type == 'section'" class="card-text">{{ c.data }}</div>
+          </template>
+        </div>
       </RouterLink>
     </div>
   </div>
@@ -48,7 +50,12 @@ async function doPostSearch(queryParam) {
   const MAX_TEXT_SIZE = 50
   const MAX_CONTENT_SIZE = 3
 
+  console.log(json)
+
+  json = json.filter(p => p != null)
+
   for (let p of json) {
+
     let content: Content[] = p.content
 
     if (content.length > MAX_CONTENT_SIZE) {
@@ -81,5 +88,9 @@ async function doPostSearch(queryParam) {
   text-decoration: none;
   max-height: 430px;
   overflow-y: hidden;
+
+  &:hover {
+    background-color: var(--bs-gray-800);
+  }
 }
 </style>
