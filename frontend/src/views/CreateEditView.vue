@@ -137,8 +137,6 @@ async function postPost() {
   let filtered = scrubPost(post.value)
   let errors = validatePost(filtered)
 
-  console.log(filtered)
-
   if (errors.length > 0) {
     postingErrors.value = errors
     return
@@ -153,8 +151,6 @@ async function postPost() {
     apiUrl = `${API_URL}/posts`
   }
 
-  console.log(`Sending ${method} request to ${apiUrl}`)
-
   let result = await fetch(
     apiUrl, 
     {
@@ -166,13 +162,9 @@ async function postPost() {
     }
   )
 
-  console.log(`Response gotten, awating json :)`)
-
   let json = await result.json()
-
-  console.log(json)
-
   let id = json.id
+
   router.push({name: 'post', params: {id: id}})
 }
 
@@ -363,7 +355,7 @@ async function submitImage(event: MouseEvent): Promise<void> {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <input class="form-control" id="imginput" type="file">
+        <input class="form-control" id="imginput" type="file" multiple>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
