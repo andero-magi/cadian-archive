@@ -7,6 +7,7 @@ import TagService from "../tag-service.js"
 import * as tagsParser from "../tags-parser.js"
 import { Post } from "../models/Post.model.js"
 import { getServer } from "../index.js"
+import { filterPosts } from "../search.js"
 
 // Define post schemas
 export const PostShape = yup.object().shape({
@@ -56,8 +57,22 @@ export class PostsController {
     
     for (let postId of matchingIds) {
       let post = await this.#posts.getPostById(postId)
+      if (post == null) {
+        continue
+      }
+
       posts.push(post)
     }
+
+    posts = (await filterPosts(this.#tagService, posts, searchExpr))
+      .map(pt => ({
+        id: pt.post.id,
+        author_id: pt.post.author_id,
+        tags: pt.tags,
+        content: pt.post.content,
+        modified_date: pt.post.modified_date,
+        upload_date: pt.post.upload_date
+      }))
 
     res.status(200).send(posts)
   }
