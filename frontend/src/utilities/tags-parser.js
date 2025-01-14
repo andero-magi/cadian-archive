@@ -2,6 +2,10 @@ export class TagSearch {
   tagName = ''
   negated = false
 
+  constructor(tagName = '') {
+    this.tagName = tagName
+  }
+
   testPost(post) {
     let found = post.tags.includes(this.tagName)
     return found != this.negated

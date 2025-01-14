@@ -4,6 +4,7 @@ import PageContent from "../components/PageContent.vue"
 import PostTags from "../components/PostTags.vue"
 import { useRoute } from "vue-router";
 import { getPost } from "@/utils";
+import Leftsidebar from "@/components/leftsidebar.vue";
 
 const route = useRoute()
 const currentPost = ref({})
@@ -26,9 +27,11 @@ async function fetchPost() {
 </script>
 
 <template>
-    <div class="d-flex justify-content-center" style="width: 100%;">
-      <PageContent :post="currentPost"/>
-    </div>
+  <Leftsidebar/>
 
-    <PostTags :post="currentPost"/>
+  <div class="d-flex justify-content-center" style="width: 100%;">
+    <PageContent :post="currentPost"/>
+  </div>
+
+  <PostTags :post="currentPost"/>
 </template>

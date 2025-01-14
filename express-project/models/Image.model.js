@@ -18,7 +18,7 @@ export function initImageModel(sequelize) {
         primaryKey: true
       },
       image_type: {
-        type: DataTypes.ENUM('jpeg', 'png')
+        type: DataTypes.STRING
       },
       image_data: {
         type: DataTypes.BLOB('long')

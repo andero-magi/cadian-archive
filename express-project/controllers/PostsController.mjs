@@ -6,6 +6,8 @@ import ImagesService from "../image-service.js"
 import TagService from "../tag-service.js"
 import * as tagsParser from "../tags-parser.js"
 import { Post } from "../models/Post.model.js"
+import { getServer } from "../index.js"
+import { filterPosts } from "../search.js"
 
 // Define post schemas
 export const PostShape = yup.object().shape({
@@ -49,15 +51,30 @@ export class PostsController {
       searchExpr = tagsParser.parseTags(search)
     }
 
-    let postArray = await this.#posts.searchPosts(searchExpr)
-    let arr = []
-
-    for (let p of postArray) {
-      let api = await toApiObject(p, this.#tagService)
-      arr.push(api)
-    }
+    let tagSearches = searchExpr.filter(p => p instanceof tagsParser.TagSearch)
+    let matchingIds = await this.#tagService.findPostsByLinkedTags(tagSearches)
+    let posts = []
     
-    res.status(200).send(arr)
+    for (let postId of matchingIds) {
+      let post = await this.#posts.getPostById(postId)
+      if (post == null) {
+        continue
+      }
+
+      posts.push(post)
+    }
+
+    posts = (await filterPosts(this.#tagService, posts, searchExpr))
+      .map(pt => ({
+        id: pt.post.id,
+        author_id: pt.post.author_id,
+        tags: pt.tags,
+        content: pt.post.content,
+        modified_date: pt.post.modified_date,
+        upload_date: pt.post.upload_date
+      }))
+
+    res.status(200).send(posts)
   }
 
   /**
@@ -71,9 +88,12 @@ export class PostsController {
       return
     }
 
+    if (!(await processImages(req, res, this.#images, j.content))) {
+      return
+    }
+
     await ensureTagsExist(this.#tagService, j.tags)
-    await processImages(this.#images, j.content)
-  
+
     let created = await this.#posts.createPost(j)
 
     await processTags(j.tags, created, this.#tagService)
@@ -98,9 +118,20 @@ export class PostsController {
       res.status(404).send({error: `Post with UUID ${id} not found`})
       return 
     }
-  
+
+    let content = post.content
+    for (let sect of content) {
+      if (sect.type != "imageref") {
+        continue
+      }
+
+      await this.#images.deleteImage(sect.data)
+    }
+
+    await this.#tagService.clearLinkedTags(post.id)
     await this.#posts.deletePost(id)
-    res.status(200).send({message: "Successfully deleted post"})
+
+    res.status(200).send({message: `Successfully deleted post ${id}`})
   }
 
   /**
@@ -121,7 +152,7 @@ export class PostsController {
       return 
     }
   
-    return res.status(200).send(await toApiObject(post, this.#tagService))
+    return res.status(200).send(await toApiObject(getBaseUrl(req), post, this.#tagService))
   }
 
   /**
@@ -146,12 +177,15 @@ export class PostsController {
       return
     }
   
+    if (!(await processImages(req, res, this.#images, existing.content))) {
+      return
+    }
+
     await ensureTagsExist(this.#tagService, j.tags)
-    await processImages(this.#images, existing.content)
     await processTags(j.tags, existing, this.#tagService)
   
     let newObj = await this.#posts.modifyPost(id, j)
-    res.status(200).send(await toApiObject(newObj, this.#tagService))
+    res.status(200).send(await toApiObject(getBaseUrl(req), newObj, this.#tagService))
   }
 }
 
@@ -184,18 +218,35 @@ async function ensureTagsExist(tagService, tags) {
  * @param {Post} post 
  * @param {TagService} tagService 
  */
-async function toApiObject(post, tagService) {
+async function toApiObject(baseUrl, post, tagService) {
   let tags = await tagService.getLinkedTags(post)
   let tagNameArray = tags.map(t => t.id)
+
+  let content = post.content
 
   return {
     id: post.id,
     author_id: post.author_id,
     modified_date: post.modified_date,
     upload_date: post.upload_date,
-    content: post.content,
+    content: content,
     tags: tagNameArray
   }
+}
+
+/**
+ * Gets the base URL used for the request.
+ * @param {express.Request} req Request
+ * @returns {string} Base URL
+ */
+function getBaseUrl(req) {
+  let prot = req.protocol
+  let host = req.host
+  
+  let server = getServer()
+  let port = server.address().port
+
+  return `${prot}://${host}:${port}`
 }
 
 /**
@@ -210,6 +261,10 @@ async function toApiObject(post, tagService) {
  */
 async function tryValidate(req, res) {
   let j = req.body
+
+  console.log(j)
+  console.log(typeof j)
+  console.log(j.author_id)
 
   try {
     j = await PostShape.validate(j)
@@ -235,10 +290,13 @@ async function tryValidate(req, res) {
  * them to the internal service, replacing the imagedata values
  * with imagerefs.
  * 
+ * @param {express.Request} req Request
+ * @param {express.Response} res Request
  * @param {any[]} j content array
  * @param {ImagesService} images 
+ * @returns {Promise<boolean>}
  */
-async function processImages(images, contentArray) {
+async function processImages(req, res, images, contentArray) {
   if (contentArray == null) {
     return
   }
@@ -249,10 +307,35 @@ async function processImages(images, contentArray) {
       continue
     }
 
-    let uploadedId = await images.uploadImage(c.data, c.image_type ?? "jpeg")
-    c.data = uploadedId
-    c.type = "imageref"
+    const prefix = "data:"
+    const suffix = ";base64,"
+
+    let data = String(c.data)
+    let idx = data.indexOf(suffix)
+
+    if (!data.startsWith(prefix) || idx == -1) {
+      req.status(400).send({error: "imagedata is not a base64 encoded string"})
+      return false
+    }
+
+    let mimeType = data.substring(prefix.length, idx)
+    if (!mimeType.startsWith("image/")) {
+      req.status(400).send({error: "imagedata does not have image mime type"})
+      return false
+    }
+
+    let base64Data = data.substring(idx + suffix.length)
+    let imgId = await images.uploadImage(base64Data, mimeType)
+
+    let ndata = {
+      type: "imageref",
+      data: imgId
+    }
+
+    contentArray[i] = ndata
   }
+
+  return true
 }
 
 /**

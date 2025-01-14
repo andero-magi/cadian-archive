@@ -1,27 +1,20 @@
 <template>
   <div class="sticky-top d-flex flex-column flex-shrink-0 p-3 text-white bg-darker" style="width: 280px; height: 100vh;">
     <h5 class="mb-4">Search</h5>
-    <form @submit.prevent="onSearch">
-      <input v-model="searchString" class="form-control" placeholder="Search"/>
-      <div>
-        <button type="submit" class="btn btn-primary mt-2">Search...</button>
-      </div>
-    </form>
+
+    <div>
+      <Suspense>
+        <TagSearchBar @tag-submit="onTagSubmit" :button="'none'"/>
+      </Suspense>
+    </div>
+
 
     <h5 class="my-4">Searched Tags</h5>
-    <div id="searched-tags-container">
-      <div 
-        v-for="(t, idx) in tagList" 
-        :tag-negated="t.negated" 
-        :tag-idx="idx" 
-        :tag="t" 
-        @click="onTagClick" 
-        class="d-flex justify-content-between bg-dark rounded-pill px-3 py-1 border m-1"
-      >
-        <span>{{ t.toPrettyString() }}</span>
-        <button class="tag-negate-toggle">&#10005;</button>
-      </div>
-    </div>
+    <template v-for="(tag, idx) in tagList" :key="tag">
+      <SingleTag :fullwidth="true" @tagclick="onTagRemove" :tag="tag" :removecross="true"/>
+    </template>
+
+    <button @click="onSearch" class="mt-2 btn btn-primary">Search...</button>
   </div>
 </template>
 
@@ -31,93 +24,62 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { SEARCH_ADD_EVENT, SEARCH_EXCLUDE_EVENT, SEARCH_REMOVE_EVENT, SEARCH_SET_EVENT } from '@/consts';
 import { useRoute } from 'vue-router';
 import { FieldSearch, parseTags, TagSearch } from '@/utilities/tags-parser';
+import TagSearchBar from './TagSearchBar.vue';
+import SingleTag from './SingleTag.vue';
+import { searchTermsToString } from '@/utils';
 
 const route = useRoute()
 
-const searchString = ref("")
 const tagList = ref<(TagSearch|FieldSearch)[]>([])
 
-reloadShit()
+reloadTagList()
 
 router.afterEach((to, from, a) => {
-  reloadShit()
-  //asdasd
+  reloadTagList()
 })
 
-function reloadShit() {
-  searchString.value = (route.query.q ?? "") as string
-  reloadTagList()
-}
-
-// Called when a searched tag is clicked on, or when the X on the 
-// right side of the tag is clicked on
-function onTagClick(ev) {
-  let tagIdx = ev.currentTarget.getAttribute("tag-idx")
-
-  if (tagIdx == null) {
+function onTagSubmit(tag: TagSearch | FieldSearch): void {
+  if (tagList.value.includes(tag)) {
     return
   }
 
-  tagIdx = parseInt(tagIdx)
-  ev.preventDefault()
+  tagList.value.push(tag)
+}
 
-  let target = ev.target
-
-  // If toggling tag negation or just removing it
-  if (target.classList.contains("tag-negate-toggle")) {
-    // Toggle negation
-    let tag = tagList.value[tagIdx]
-    tag.negated = !tag.negated
-    tagList.value[tagIdx] = tag
-  } else {
-    // Remove tag
-    tagList.value.splice(tagIdx, 1)
+function onTagRemove(tag: TagSearch | FieldSearch): void {
+  let idx = tagList.value.indexOf(tag)
+  if (idx == -1) {
+    return
   }
 
-  updateSearchStringFromList()
+  tagList.value.splice(idx, 1)
 }
 
 // Called when the "Search" button is clickeed
 function onSearch() {
-  reloadTagList()
   runSearch()
 }
 
-/**
- * Update the searchString by joining the tagList into a string
- */
-function updateSearchStringFromList() {
-    // Remake what the user has typed in because we changed shit
-  let newStr = ""
-  for (let tag of tagList.value) {
-    if (tag.negated) {
-      newStr += "-"
-    }
-    newStr += tag.toString() + " "
-  }
-
-  newStr = newStr.trim()
-  searchString.value = newStr
-
-  // Update the 'q=' in the URL
-  pushSearchState()
-}
-
 function runSearch() {
-  router.push({name: "post-list", query: {q: searchString.value}})
-}
-
-function pushSearchState() {
-  router.replace({query: {...route.query, q: searchString.value}})
+  router.push({name: "post-list", query: {q: searchTermsToString(tagList.value)}})
 }
 
 function reloadTagList() {
-  if (searchString.value == "") {
+  let searchString = route.query.q
+  if (searchString == null || searchString == undefined || searchString == "") {
     tagList.value = []
     return
   }
 
-  let parsed = parseTags(searchString.value.trim())
+  let q: string
+
+  if (typeof searchString != "string") {
+    q = searchString[0]
+  } else {
+    q = searchString
+  }
+
+  let parsed = parseTags(q)
   tagList.value = parsed
 }
 
@@ -131,14 +93,8 @@ function onTagEvent(event: CustomEvent<string>) {
     s.tagName = tag
     s.negated = false
     tagList.value = [s]
-
-    // Probably the worst offense of anything here in this mess:
-    //  1. Change the tag list
-    //  2. Combine that list into a string and change the searchString value
-    //  3. Use that string to route to the search view
-    updateSearchStringFromList()
+    
     runSearch()
-
     return
   }
 
@@ -159,7 +115,6 @@ function onTagEvent(event: CustomEvent<string>) {
 
       if (s.negated) {
         s.negated = false
-        updateSearchStringFromList()
       }
 
       return
@@ -169,7 +124,6 @@ function onTagEvent(event: CustomEvent<string>) {
     s.tagName = tag
     s.negated = false
     tagList.value.push(s)
-    updateSearchStringFromList()
 
     return
   }
@@ -181,7 +135,6 @@ function onTagEvent(event: CustomEvent<string>) {
     }
 
     tagList.value.splice(idx, 1)
-    updateSearchStringFromList()
 
     return
   }
@@ -194,14 +147,12 @@ function onTagEvent(event: CustomEvent<string>) {
       s.tagName = tag
       s.negated = true
       tagList.value.push(s)
-      updateSearchStringFromList()
       return
     }
 
     let s = tagList.value[idx]
     s.negated = true
 
-    updateSearchStringFromList()
     return
   }
 }

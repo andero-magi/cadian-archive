@@ -34,8 +34,10 @@ export class AssetsController {
   
     if (imgData.image_type == "png") {
       mimeType = "image/png"
-    } else {
+    } else if (imgData.image_type == "jpeg") {
       mimeType = "image/jpeg"
+    } else {
+      mimeType = imgData.image_type
     }
 
     res.writeHead(200, null, {
