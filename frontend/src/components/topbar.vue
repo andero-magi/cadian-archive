@@ -18,6 +18,12 @@ import { RouterLink } from 'vue-router';
           <li>
             <RouterLink class="nav-link" to="/newpost">New Post</RouterLink>
           </li>
+          <li>
+            <RouterLink class="nav-link" to="/login">Login</RouterLink>
+          </li>
+          <li>
+            <RouterLink class="nav-link" to="/profile">View Profile</RouterLink>
+          </li>
         </ul>
       </div>
     </div>

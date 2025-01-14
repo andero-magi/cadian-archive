@@ -1,6 +1,7 @@
 import express from "express"
 import yup from "yup"
 import {UserService} from "../user-service.js"
+import * as yup from "yup";
 
 export class UsersController{ 
 userService = new UserService
@@ -22,6 +23,11 @@ constructor() {
   });
 }
 
+  /*export const userSchema = yup.object().shape({
+  username: yup.string().required("Username is required"),
+  password: yup.string().required("Password is required"),
+  email: yup.string().email("Invalid email format").required("Email is required"),
+});*/
 
 createUser(req, res) {
     
@@ -53,7 +59,7 @@ async updateUser(req, res) {
         return res.status(400).send({error: "Invalid user data"});
       }  
     
-        let user = await this.userService.modifyUser(req.params.id, req.body.username, req.body.password)
+        let user = await this.userService.modifyUser(req.params.id, req.body.username, req.body.password, req.body.email);
         
         res.status(200).send(user);
 }
@@ -71,7 +77,6 @@ async getUser(req, res){
       return res.status(200).send(user);
 }
 
-//dont remember if this works
 async deleteUser(req, res) {
   if (!req.params.id) {
       return res.status(404).send({ error: "User not found1" }); 
