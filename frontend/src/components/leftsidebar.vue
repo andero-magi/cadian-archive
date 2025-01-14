@@ -6,12 +6,6 @@
       <Suspense>
         <TagSearchBar @tag-submit="onTagSubmit" :button="'none'"/>
       </Suspense>
-
-      <select v-model="sortTag" class="form-control mt-3">
-        <option disabled selected value="" class="text-muted">Post sorting...</option>
-        <option value="created">Creation Date</option>
-        <option value="modified">Last Modified Date</option>
-      </select>
     </div>
 
 
@@ -37,7 +31,6 @@ import { searchTermsToString } from '@/utils';
 const route = useRoute()
 
 const tagList = ref<(TagSearch|FieldSearch)[]>([])
-const sortTag = ref<string>("")
 
 reloadTagList()
 
@@ -67,26 +60,8 @@ function onSearch() {
   runSearch()
 }
 
-function getSortTag(): FieldSearch | undefined {
-  for (let t of tagList.value) {
-    if (t instanceof FieldSearch && t.fieldName == "sort") {
-      return t
-    }
-  }
-
-  return undefined
-}
-
 function runSearch() {
-  let tags = [...tagList.value]
-  if (sortTag.value != null && sortTag.value != "") {
-    let sortSearch = getSortTag() ?? new FieldSearch()
-    sortSearch.fieldName = "sort"
-    sortSearch.fieldValue = sortTag.value
-    tags.push(sortSearch)
-  }
-
-  router.push({name: "post-list", query: {q: searchTermsToString(tags)}})
+  router.push({name: "post-list", query: {q: searchTermsToString(tagList.value)}})
 }
 
 function reloadTagList() {
