@@ -38,9 +38,15 @@ export async function filterPosts(tags, posts, searchArr) {
   }
 
   let sortTag = findFieldSearch(searchArr, "sort")
-  if (sortTag != null) {
-    applySort(result, sortTag.fieldValue, sortTag.negated)
+
+  if (sortTag == null) {
+    sortTag = new FieldSearch()
+    sortTag.fieldName = "sort"
+    sortTag.fieldValue = "edited"
+    sortTag.negated = false
   }
+
+  applySort(result, sortTag.fieldValue, sortTag.negated)
 
   return result
 }
@@ -54,8 +60,10 @@ function applySort(posts, sortName, sortNegated) {
   switch (sortName.toLowerCase()) {
     case "edited":
     case "modified":
+    case "updated":
       // sort by modified_date field
       applySortByDate(posts, p => p.modified_date, sortNegated)
+      break
 
     case "created":
     case "uploaded":
@@ -74,13 +82,18 @@ function applySortByDate(posts, dateAccess, negated) {
     let d1 = new Date(dateAccess(a.post))
     let d2 = new Date(dateAccess(b.post))
 
+    let dA
+    let dB
+
     if (negated) {
-      let t = d1
-      d1 = d2
-      d2 = t
+      dA = d1
+      dB = d2
+    } else {
+      dA = d2
+      dB = d1
     }
 
-    return d1.getTime() - d2.getTime()
+    return dA.getTime() - dB.getTime()
   })
 }
 
