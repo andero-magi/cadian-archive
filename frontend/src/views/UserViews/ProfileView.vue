@@ -20,6 +20,7 @@
 
 
 <template>
+  
     <div class="profile-page">
       <h1>User Profile</h1>
   
@@ -53,7 +54,10 @@ import { API_URL } from "@/consts";
 import { ref } from "vue";
   
  //mock, need to replace with api call
-  const user = await (await fetch(`${API_URL}/users${user.value.id}`))
+
+  const user = await (await fetch(`${API_URL}/users${user.value.id}`));
+
+  let result = await fetch(apiUrl, {method: method, body: user.value})
 
   result = fetch(`${API_URL}/users`);
 
@@ -63,7 +67,7 @@ import { ref } from "vue";
   const form = ref({
     username: user.value.username,
     email: user.value.email,
-    password: "dave1",
+    password: "",
   });
   
   function toggleEdit() {
