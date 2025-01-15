@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-          <h1>Login</h1>
+    <h1>Login</h1>
     <div class="login-form">
       <form @submit.prevent="submitForm">
         <div class="input-group">
@@ -11,10 +11,6 @@
           <label for="password">Password:</label>
           <input v-model="password" id="password" type="password" placeholder="Enter your password" required />
         </div>
-        <div class="input-group">
-          <label for="email">Email:</label>
-          <input v-model="email" id="email" type="email" placeholder="Enter your email" required />
-        </div>
         <button type="submit" class="btn">Login</button>
         <p class="signup-link">Don't have an account? <a href="">Sign up</a></p>
       </form>
@@ -24,20 +20,42 @@
 
 <script setup>
 import { ref } from "vue";
+import { API_URL } from "@/consts"; 
+
 const username = ref("");
 const password = ref("");
-const email = ref("");
 
-function submitForm() {
-  alert(`Username: ${username.value}`);
-  alert(`Password: ${password.value}`);
-  alert(`Email: ${email.value}`);
-  let loggedIn = true;
-}
+async function submitForm() {
+  try {
+    // request payload
+    const payload = {
+      username: username.value,
+      password: password.value,
+    };
 
-async function makeUser(){
-  if(true){
-    return 
+    //API call
+    const response = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert(`Error: ${errorData.error || "Login failed"}`);
+      return;
+    }
+
+    const data = await response.json();
+    alert(`Login successful! Welcome ${data.username || "User"}`);
+    console.log("User data:", data);
+
+
+  } catch (error) {
+    console.error("An error occurred during login:", error);
+    alert("An unexpected error occurred. Please try again later.");
   }
 }
 </script>

@@ -42,4 +42,5 @@ export function registerRoutes(app, posts, assets, users, tags) {
    .put((req, res) => users.updateUser(req, res))
    .get((req, res) => users.getUser(req, res))
    .delete((req, res) => users.deleteUser(req, res))
+   .post((req, res) => users.loginUser(req, res))
 }

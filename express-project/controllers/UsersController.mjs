@@ -1,14 +1,17 @@
 import express from "express"
 import yup from "yup"
 import {UserService} from "../user-service.js"
-import * as yup from "yup";
 
 export class UsersController{ 
 userService = new UserService
 
-/**
- *
- */
+//User schema
+  userSchema = yup.object().shape({
+  username: yup.string().required(),
+  password: yup.string().required(),
+  email: yup.string().email().required(),
+});
+
 constructor() {
   let users = [
     { 
@@ -22,12 +25,6 @@ constructor() {
     this.userService.createUser(user);
   });
 }
-
-  /*export const userSchema = yup.object().shape({
-  username: yup.string().required("Username is required"),
-  password: yup.string().required("Password is required"),
-  email: yup.string().email("Invalid email format").required("Email is required"),
-});*/
 
 createUser(req, res) {
     
@@ -97,4 +94,24 @@ async deleteUser(req, res) {
   return res.status(200).send();
 }
 
+async loginUser(req, res) {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+      return res.status(400).send({ error: "Username and password are required" });
+  }
+
+  const users = await this.userService.getAllUsers();
+  const user = users.find((u) => u.username === username && u.password === password);
+
+  if (!user) {
+      return res.status(401).send({ error: "Invalid username or password" });
+  }
+
+  // Example: Send user data or token upon successful login
+  res.status(200).json({
+    message: "Login successful",
+    username: user.username,
+  });
+  }
 }
