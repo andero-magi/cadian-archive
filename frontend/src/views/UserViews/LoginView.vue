@@ -52,6 +52,10 @@ async function submitForm() {
     alert(`Login successful! Welcome ${data.username || "User"}`);
     console.log("User data:", data);
 
+    //localstorage update
+    localStorage.setItem("isAuthenticated", "true");
+    localStorage.setItem("username", data.username);
+    window.location.href = "/posts"
 
   } catch (error) {
     console.error("An error occurred during login:", error);
