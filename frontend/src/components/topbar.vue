@@ -12,18 +12,11 @@ import { RouterLink } from 'vue-router';
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="/">Home</a>
-          </li>
-          <li>
-            <RouterLink class="nav-link" to="/newpost">New Post</RouterLink>
-          </li>
-          <li>
-            <RouterLink class="nav-link" to="/login">Login</RouterLink>
-          </li>
-          <li>
-            <RouterLink class="nav-link" to="/profile">View Profile</RouterLink>
-          </li>
+          <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
+          <li><RouterLink class="nav-link" to="/newpost">New Post</RouterLink></li>
+          <li><RouterLink class="nav-link" to="/about">About</RouterLink></li>
+          <li><RouterLink class="nav-link" to="/login">Login</RouterLink></li>
+          <li><RouterLink class="nav-link" to="/profile">View Profile</RouterLink></li>
         </ul>
       </div>
     </div>

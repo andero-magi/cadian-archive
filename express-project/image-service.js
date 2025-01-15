@@ -30,6 +30,19 @@ class ImagesService {
     return imgId
   }
 
+  /**
+   * @param {string} imageId 
+   */
+  async deleteImage(imageId) {
+    let image = await this.findImage(imageId)
+    delete this.#images[imageId]
+    await image.destroy()
+  }
+
+  /**
+   * @param {string} imageId 
+   * @returns {Promise<ImageModel>}
+   */
   async findImage(imageId) {
     let cached = this.#images[imageId]
 

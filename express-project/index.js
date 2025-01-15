@@ -42,8 +42,14 @@ const tagsC = new TagsController(tagService)
 // Set up server
 app.use(cors())
 app.use('/docs', serve, setup(swaggerDoc))
-app.use(json())
+app.use(json({limit: '1gb'}))
 
 registerRoutes(app, postsC, imagesC, usersC, tagsC)
 
-app.listen(port, () => console.log(`URL: http://${host}:${port}/docs`))
+const server = app.listen(port, () => console.log(`URL: http://${host}:${port}/docs`))
+
+getServer().address()
+
+export function getServer() {
+  return server
+}
