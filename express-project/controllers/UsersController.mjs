@@ -111,6 +111,8 @@ async loginUser(req, res) {
   res.status(200).json({
     message: "Login successful",
     username: user.username,
+    id: user.id,
   });
   }
+  
 }

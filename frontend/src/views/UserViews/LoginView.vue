@@ -27,7 +27,6 @@ const password = ref("");
 
 async function submitForm() {
   try {
-    // request payload
     const payload = {
       username: username.value,
       password: password.value,
@@ -51,10 +50,13 @@ async function submitForm() {
     const data = await response.json();
     alert(`Login successful! Welcome ${data.username || "User"}`);
     console.log("User data:", data);
+    console.log("Login response data:", data);
 
     //localstorage update
     localStorage.setItem("isAuthenticated", "true");
     localStorage.setItem("username", data.username);
+    localStorage.setItem("userId", data.id);
+    localStorage.setItem("authToken", data.token);
     window.location.href = "/posts"
 
   } catch (error) {

@@ -48,4 +48,6 @@ export function registerRoutes(app, posts, assets, users, tags) {
 
   app.route("/signup")
   .post((req, res) => users.createUser(req, res));
+
+
 }
