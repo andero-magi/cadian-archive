@@ -30,7 +30,8 @@ function logout() {
           <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
           <li><RouterLink class="nav-link" to="/newpost">New Post</RouterLink></li>
           <li><RouterLink class="nav-link" to="/about">About</RouterLink></li>
-        
+        </ul>
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <template v-if="user.loggedIn">
             <li><RouterLink class="nav-link" to="/profile">View Profile</RouterLink></li>
             <li><a class="nav-link" href="#" @click="logout">Logout</a></li>
@@ -39,7 +40,6 @@ function logout() {
           <template v-else>
             <li><RouterLink class="nav-link" to="/login">Login</RouterLink></li>
           </template>
-
         </ul>
       </div>
     </div>
