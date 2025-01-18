@@ -1,18 +1,43 @@
 <template>
-  <div class="login-container">
-    <div class="login-form"> 
-      <h1>Login</h1>
+  <div class="signup-container">
+    <div class="signup-form">
+
+    <h1>Create an Account</h1>
       <form @submit.prevent="submitForm">
         <div class="input-group">
           <label for="username">Username:</label>
-          <input v-model="username" id="username" type="text" placeholder="Enter your username" required />
+          <input
+            v-model="username"
+            id="username"
+            type="text"
+            placeholder="Enter your username"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="email">Email:</label>
+          <input
+            v-model="email"
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            required
+          />
         </div>
         <div class="input-group">
           <label for="password">Password:</label>
-          <input v-model="password" id="password" type="password" placeholder="Enter your password" required />
+          <input
+            v-model="password"
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            required
+          />
         </div>
-        <button type="submit" class="btn">Login</button>
-        <p class="signup-link">Don't have an account? <a href="signup">Sign up</a></p>
+        <button type="submit" class="btn">Sign Up</button>
+        <p class="login-link">
+          Already have an account? <RouterLink to="/login">Log in</RouterLink>
+        </p>
       </form>
     </div>
   </div>
@@ -20,21 +45,24 @@
 
 <script setup>
 import { ref } from "vue";
-import { API_URL } from "@/consts"; 
+import { useRouter } from "vue-router";
+import { API_URL } from "@/consts";
 
 const username = ref("");
+const email = ref("");
 const password = ref("");
+
+const router = useRouter();
 
 async function submitForm() {
   try {
-    // request payload
     const payload = {
       username: username.value,
+      email: email.value,
       password: password.value,
     };
 
-    //API call
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_URL}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,21 +72,15 @@ async function submitForm() {
 
     if (!response.ok) {
       const errorData = await response.json();
-      alert(`Error: ${errorData.error || "Login failed"}`);
+      alert(`Error: ${errorData.error || "Sign-up failed"}`);
       return;
     }
 
     const data = await response.json();
-    alert(`Login successful! Welcome ${data.username || "User"}`);
-    console.log("User data:", data);
-
-    //localstorage update
-    localStorage.setItem("isAuthenticated", "true");
-    localStorage.setItem("username", data.username);
-    window.location.href = "/posts"
-
+    alert(`Account created successfully! You can now log in.`);
+    router.push("/login");
   } catch (error) {
-    console.error("An error occurred during login:", error);
+    console.error("An error occurred during sign-up:", error);
     alert("An unexpected error occurred. Please try again later.");
   }
 }
@@ -74,13 +96,13 @@ body {
   margin: 0;
 }
 
-.login-container {
+.signup-container {
   width: 100%;
   display: flex;
   justify-content: center;
 }
 
-.login-form {
+.signup-form {
   border: 1px solid #ddd;
   padding: 20px;
   border-radius: 5px;
@@ -129,17 +151,17 @@ button:hover {
   background-color: #0088cc;
 }
 
-.signup-link {
+.login-link {
   text-align: center;
   margin-top: 15px;
 }
 
-.signup-link a {
+.login-link a {
   color: #00aaff;
   text-decoration: none;
 }
 
-.signup-link a:hover {
+.login-link a:hover {
   text-decoration: underline;
 }
 </style>

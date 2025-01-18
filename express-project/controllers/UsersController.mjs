@@ -108,7 +108,6 @@ async loginUser(req, res) {
       return res.status(401).send({ error: "Invalid username or password" });
   }
 
-  // Example: Send user data or token upon successful login
   res.status(200).json({
     message: "Login successful",
     username: user.username,
