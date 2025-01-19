@@ -75,15 +75,17 @@ async getUser(req, res){
 }
 
 async deleteUser(req, res) {
-  if (!req.params.id) {
-      return res.status(404).send({ error: "User not found1" }); 
+  const id = req.params.id;
+  const password = req.body.password;
+
+  if (!req.params.id || !req.body.password) {
+      return res.status(404).send({ error: "Id and password required" }); 
   }
 
-  const id = req.params.id;
   const user = await this.userService.getUserById(id);
 
   if (!user) {
-      return res.status(404).send({ error: "User not found2" }); 
+      return res.status(404).send({ error: "User not found" }); 
   }
 
   const success = await this.userService.deleteUser(id);
@@ -91,7 +93,7 @@ async deleteUser(req, res) {
       return res.status(404).send({ error: "Could not Delete User" }); 
   }
 
-  return res.status(200).send();
+  return res.status(200).send({message: "User deleted successfully"});
 }
 
 async loginUser(req, res) {

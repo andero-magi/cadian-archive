@@ -57,7 +57,7 @@ async function submitForm() {
     localStorage.setItem("username", data.username);
     localStorage.setItem("userId", data.id);
     localStorage.setItem("authToken", data.token);
-    window.location.href = "/posts"
+    //window.location.href = "/posts"
 
   } catch (error) {
     console.error("An error occurred during login:", error);
