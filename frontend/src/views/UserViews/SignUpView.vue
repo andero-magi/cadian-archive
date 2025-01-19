@@ -62,7 +62,7 @@ async function submitForm() {
       password: password.value,
     };
 
-    const response = await fetch(`${API_URL}/signup`, {
+    const response = await fetch(`${API_URL}/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,6 +84,7 @@ async function submitForm() {
     alert("An unexpected error occurred. Please try again later.");
   }
 }
+
 </script>
 
 <style scoped>

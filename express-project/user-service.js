@@ -20,6 +20,7 @@ export class UserService {
 
     async createUser(userdata){
         this.#users[userdata.id] = userdata;userdata;
+        return userdata;
     }
 
 modifyUser(id,username, password, email){

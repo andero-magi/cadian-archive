@@ -37,7 +37,8 @@ createUser(req, res) {
         password: req.body.password,
         email: req.body.email
       }
-      users.push(user);
+      this.userService.createUser(user);
+      //users.push(user);
       res.status(201).send(user);
 }
 
