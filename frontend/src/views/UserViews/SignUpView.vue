@@ -1,6 +1,6 @@
 <template>
   <div class="signup-container">
-    <div class="signup-form">
+    <div class="signup-form bg-darker">
 
     <h1>Create an Account</h1>
       <form @submit.prevent="submitForm">
