@@ -30,6 +30,7 @@ function logout() {
           <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
           <li><RouterLink class="nav-link" to="/newpost">New Post</RouterLink></li>
           <li><RouterLink class="nav-link" to="/about">About</RouterLink></li>
+          <li><RouterLink class="nav-link" to="/searchUser">Search User</RouterLink></li>
         </ul>
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <template v-if="user.loggedIn">

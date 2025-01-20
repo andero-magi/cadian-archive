@@ -37,6 +37,7 @@ export function registerRoutes(app, posts, assets, users, tags) {
   // == Users ==
   app.route("/users")
   .post((req, res) => users.createUser(req, res))
+  .get((req, res) => users.getUser(req, res));
 
   app.route("/users/:id")
    .put((req, res) => users.updateUser(req, res))

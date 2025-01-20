@@ -46,5 +46,12 @@ modifyUser(id,username, password, email){
     getAllUsers() {
         return Object.values(this.#users);
     }
+
+    getUsersByName(partialUsername){
+        const users = this.getAllUsers();
+        return users.filter(user => 
+            user.username.toLowerCase().includes(partialUsername.toLowerCase())
+        );
+    }
     
 }

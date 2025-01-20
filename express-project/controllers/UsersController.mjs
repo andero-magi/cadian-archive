@@ -62,17 +62,21 @@ async updateUser(req, res) {
         res.status(200).send(user);
 }
 
-async getUser(req, res){
-    if (req.params.id == null){
-        return
-      }
-    
+async getUser(req, res) {
+  // If id provided in URL, return the user by ID
+  if (req.params.id) {
       let user = await this.userService.getUserById(req.params.id);
-      if (user == null){
-        res.status(404).send({error: `User with this ${req.params.id} doesnt exist`});
-        return
-      }
       return res.status(200).send(user);
+  }
+
+  // If id is not provided, check for username parameter
+  const usernameQuery = req.query.username;
+  if (usernameQuery) {
+      const matchingUsers = this.userService.getUsersByName(usernameQuery);
+      return res.status(200).send(matchingUsers);
+  }
+
+  return res.status(400).send({ error: "Either 'id' or 'username' query parameter is required" });
 }
 
 async deleteUser(req, res) {
