@@ -1,6 +1,6 @@
 import * as UUID from "uuid"
 import { User } from "./models/User.model.js";
-import Sequelize, { col, fn } from "@sequelize/core";
+import Sequelize, { Col, Op, col, fn, where } from "@sequelize/core";
 
 export class UserService {
   #cache = {}
@@ -74,9 +74,7 @@ export class UserService {
   async getUsersByName(partialUsername){
     let found = User.findAll(
       {
-        where: {
-          username: where(fn('LOWER', col('username')), 'LIKE', `%${partialUsername.toLowerCase()}%`)
-        }
+        where: where(fn('LOWER', new Col('username')), Op.like, `%${partialUsername.toLowerCase()}%`)
       }
     )
 
