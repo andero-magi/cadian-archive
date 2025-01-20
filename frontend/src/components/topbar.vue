@@ -13,6 +13,8 @@ onMounted(() => {
 function logout() {
   localStorage.removeItem("isAuthenticated");
   localStorage.removeItem("username");
+  localStorage.removeItem("userId");
+  
   user.loggedIn = false; 
   window.location.href = "/login";
 }
@@ -28,7 +30,9 @@ function logout() {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
-          <li><RouterLink class="nav-link" to="/newpost">New Post</RouterLink></li>
+          
+          <li v-if="user.loggedIn"><RouterLink class="nav-link" to="/newpost">New Post</RouterLink></li>
+
           <li><RouterLink class="nav-link" to="/about">About</RouterLink></li>
           <li><RouterLink class="nav-link" to="/searchUser">Search User</RouterLink></li>
         </ul>

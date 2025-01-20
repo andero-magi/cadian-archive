@@ -77,8 +77,13 @@ async function submitForm() {
     }
 
     const data = await response.json();
-    alert(`Account created successfully! You can now log in.`);
-    router.push("/login");
+
+    localStorage.setItem("isAuthenticated", "true");
+    localStorage.setItem("username", data.username);
+    localStorage.setItem("userId", data.id);
+    localStorage.setItem("authToken", data.token);
+
+    window.location.href = `/profile/${data.id}`
   } catch (error) {
     console.error("An error occurred during sign-up:", error);
     alert("An unexpected error occurred. Please try again later.");
