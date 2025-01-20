@@ -1,57 +1,89 @@
 import * as UUID from "uuid"
+import { User } from "./models/User.model.js";
+import Sequelize, { Col, Op, col, fn, where } from "@sequelize/core";
 
 export class UserService {
-    #users = {};
+  #cache = {}
 
+  constructor() {
+  }
 
-    constructor() {
-        this.#users = {}; // create private field
+  
+  generateUserId(){
+    return UUID.v7();
+  }
+
+  /**
+   * @param {string} id 
+   * @returns {Promise<User>}
+   */
+  async getUserById(id) {
+    let cached = this.#cache[id]
+    if (cached) {
+      return cached
     }
 
-    
-    generateUserId(){
-        return UUID.v7();
+    let found = await User.findOne({where: {id: id}})
+    if (found) {
+      this.#cache[id] = found
     }
 
-    getUserById(id) {
-        return this.#users[id];
+    return found
+  }
+
+  /**
+   * @param {any} userdata 
+   * @returns {User}
+   */
+  async createUser(userdata){
+    let user = await User.create(userdata)
+    this.#cache[user.id] = user
+    return user
+  }
+
+  async modifyUser(id, username, password, email) {
+    let p = await this.getUserById(id)
+    if (!p) {
+      return null
     }
 
+    p.set({
+      username: username,
+      password: password,
+      email: email
+    })
+    await p.save()
 
-    async createUser(userdata){
-        this.#users[userdata.id] = userdata;userdata;
-        return userdata;
+    return p
+  }
+
+  async deleteUser(id) {
+    let found = await this.getUserById(id)
+    if (!found) {
+      return false
     }
 
-modifyUser(id,username, password, email){
-    let user = {
-        id: id,
-        username: username,
-        password: password,
-        email: email,
+    await found.destroy()
+    return true
+  }
+  
+  async getAllUsers() {
+    return await User.findAll()
+  }
 
-        }
-        this.#users[user.id] = user;
-        return user;
-    }
+  async getUsersByName(partialUsername){
+    let found = User.findAll(
+      {
+        where: where(fn('LOWER', new Col('username')), Op.like, `%${partialUsername.toLowerCase()}%`)
+      }
+    )
 
-    deleteUser(id) {
-        if (this.#users[id]) {
-            delete this.#users[id];
-            return true;
-        }
-        return false;
-    }
-    
-    getAllUsers() {
-        return Object.values(this.#users);
+    if (!found) {
+      return null
     }
 
-    getUsersByName(partialUsername){
-        const users = this.getAllUsers();
-        return users.filter(user => 
-            user.username.toLowerCase().includes(partialUsername.toLowerCase())
-        );
-    }
-    
+    this.#cache[found.id] = found
+    return found
+  }
+  
 }

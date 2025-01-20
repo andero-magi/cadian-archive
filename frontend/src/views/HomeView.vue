@@ -19,8 +19,8 @@
 
 
 <script setup lang="ts">
-import SingleTag from '@/components/SingleTag.vue';
-import TagSearchBar from '@/components/TagSearchBar.vue';
+import SingleTag from '@/components/posts/SingleTag.vue';
+import TagSearchBar from '@/components/posts/TagSearchBar.vue';
 import router from '@/router';
 import { FieldSearch, TagSearch } from '@/utilities/tags-parser';
 import { searchTermsToString } from '@/utils';

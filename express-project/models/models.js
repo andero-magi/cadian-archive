@@ -3,6 +3,7 @@ import { initPostModel } from "./Post.model.js";
 import { initImageModel } from "./Image.model.js";
 import { initTagModel } from "./Tag.model.js";
 import { initPostTagModel } from "./PostTag.model.js";
+import { initUserModel } from "./User.model.js";
 
 /**
  * Register models
@@ -13,4 +14,5 @@ export function registerModels(sequelize) {
   initImageModel(sequelize)
   initTagModel(sequelize)
   initPostTagModel(sequelize)
+  initUserModel(sequelize)
 }
