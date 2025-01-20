@@ -4,7 +4,7 @@
 <template>
   <div class="user_container">
       <div class="profile-page bg-darker  " >
-  <h1 style="text-align: center;">User Profile</h1>
+  <h1 style="text-align: center;padding-bottom: 20px;">User Profile</h1>
 
   <div v-if="!user">
     <p>Loading user data...</p>
@@ -121,14 +121,12 @@ background-color: #6c757d;
 color: white;
 }   
 .user_container { 
-  width: 35%;
   height: 100vh;
   border-right: 1px solid white;
   box-sizing: border-box;
 }
 .container_posts{
   height: 100vh;
-  border-right: 1px solid white;
   box-sizing: border-box;
   flex-grow: 1;
 }
