@@ -22,18 +22,18 @@
       </dl>
     </div>
 
-    <h5 class="mb-2 mt-4">Actions</h5>
-    <RouterLink class="btn btn-outline-primary" :to="{name: 'editpost', params: {id: currentPost.id}}">
+    <h5 v-if="canEdit" class="mb-2 mt-4">Actions</h5>
+    <RouterLink v-if="canEdit" class="btn btn-outline-primary" :to="{name: 'editpost', params: {id: currentPost.id}}">
       Edit Post
     </RouterLink>
     
-    <button class="btn btn-outline-danger mt-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+    <button v-if="canEdit" class="btn btn-outline-danger mt-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
       Delete Post
     </button>
   </div>
 
   <!-- Modal -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div v-if="canEdit" class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -61,12 +61,29 @@ import { useRoute } from 'vue-router';
 import SingleTag from './SingleTag.vue';
 import { TagSearch } from '@/utilities/tags-parser';
 
+const NIL_ID = '00000000-0000-0000-0000-000000000000'
+
 const route = useRoute()
 
 const props = defineProps(["post"])
 const currentPost = ref<Post>()
+let canEdit = ref<boolean>(false)
 
 currentPost.value = props.post
+
+console.log(currentPost.value)
+
+if (currentPost.value.author_id == NIL_ID) {
+  canEdit.value = true
+} else {
+  const loggedIn = localStorage.getItem("isAuthenticated") === "true";
+  const userId = localStorage.getItem("userId")
+
+  console.log(loggedIn)
+  console.log(userId)
+
+  canEdit.value = loggedIn && currentPost.value.author_id == userId
+}
 
 async function deletePost(): Promise<void> {
   let apiUrl = `${API_URL}/posts/${currentPost.value.id}`
@@ -78,7 +95,7 @@ async function deletePost(): Promise<void> {
 }
 
 function getAuthorName(): string {
-  if (currentPost.value.author_id == "00000000-0000-0000-0000-000000000000") {
+  if (currentPost.value.author_id == NIL_ID) {
     return "Anonymous"
   }
   return currentPost.value.author_id
