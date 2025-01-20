@@ -24,8 +24,8 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { SEARCH_ADD_EVENT, SEARCH_EXCLUDE_EVENT, SEARCH_REMOVE_EVENT, SEARCH_SET_EVENT } from '@/consts';
 import { useRoute } from 'vue-router';
 import { FieldSearch, parseTags, TagSearch } from '@/utilities/tags-parser';
-import TagSearchBar from './TagSearchBar.vue';
-import SingleTag from './SingleTag.vue';
+import TagSearchBar from './posts/TagSearchBar.vue';
+import SingleTag from './posts/SingleTag.vue';
 import { searchTermsToString } from '@/utils';
 
 const route = useRoute()

@@ -112,7 +112,7 @@ function onInputTyped(event: InputEvent): void {
   tags.value = arr
 }
 
-function onSuggestionClick(input: InputEvent): void {
+function onSuggestionClick(input: MouseEvent): void {
   let el = input.target as HTMLElement
   let tag = el.getAttribute("tag-name")
 
