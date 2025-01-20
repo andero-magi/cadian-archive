@@ -98,7 +98,7 @@ function applySortByDate(posts, dateAccess, negated) {
 }
 
 /**
- * @param {(FieldSearch|TagSearch)} tags 
+ * @param {(FieldSearch|TagSearch)[]} tags 
  * @param {string} fieldName 
  * @returns {FieldSearch}
  */
@@ -129,11 +129,10 @@ function testPost(post, tags, filter) {
     return hasTag != filter.negated
   }
 
-
-  let authorSearch = findFieldSearch(tags, "uploader")
-  if (authorSearch == null) {
-    return true
+  let fieldName = filter.fieldName
+  if (fieldName == "author") {
+    return filter.fieldValue == post.author_id
   }
 
-  return authorSearch.fieldValue == post.author_id
+  return false
 }
