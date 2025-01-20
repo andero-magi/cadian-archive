@@ -72,12 +72,17 @@ function scrubPost(data: Post): Post {
     }
   }
 
+  const NIL_ID = "00000000-0000-0000-0000-000000000000"
+  let userId = localStorage.getItem("userId") ?? NIL_ID
+
+  if (editMode) {
+    userId = data.author_id
+  }
+
   let postData = {
     tags: tagsOut,
     content: contentOut,
-
-    // TODO: Replace with poster's UUID when user system is done
-    author_id: "00000000-0000-0000-0000-000000000000"
+    author_id: userId
   }
 
   return postData
