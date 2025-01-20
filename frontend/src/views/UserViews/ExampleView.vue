@@ -1,17 +1,21 @@
+
+
+
 <template>
-  <div class="profile-page bg-darker  ">
-    <h1>User Profile</h1>
+    <div class="user_container">
+        <div class="profile-page bg-darker  " >
+    <h1 style="text-align: center;">User Profile</h1>
 
     <div v-if="!user">
       <p>Loading user data...</p>
     </div>
 
     <div v-else>
-      <div v-if="!isEditing" class="profile-info">
-        <p><strong>Username:</strong> {{ user.username }}</p>
+      <div v-if="!isEditing" class="profile-info" >
+        <p ><strong>Username:</strong> {{ user.username }}</p>
         <p><strong>Email:</strong> {{ user.email }}</p>
         <button @click="toggleEdit" class="btn btn-primary">Edit Profile</button>
-        <button @click="showDeleteModal" class="btn btn-danger">Delete Account</button>
+        <button @click="showDeleteModal" class="btn btn-danger" >Delete Account</button>
       </div>
 
       <form v-if="isEditing" @submit.prevent="updateProfile" class="edit-profile-form">
@@ -64,7 +68,68 @@
       </div>
     </div>
   </div>
+    </div>
+    
+    <div class="container_posts">
+        <h1 class="posts">Posts</h1>
+        
+    </div>
 </template>
+
+<style>
+.profile-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.profile-info {
+  margin-bottom: 20px;
+}
+
+.edit-profile-form {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.btn {
+  padding: 8px 16px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}   
+.user_container { 
+    width: 35%;
+    height: 100vh;
+    border-right: 1px solid white;
+    box-sizing: border-box;
+}
+.container_posts{
+    height: 100vh;
+    border-right: 1px solid white;
+    box-sizing: border-box;
+    flex-grow: 1;
+}
+.posts{
+    text-align: center;
+    right: 100px;
+}
+</style>
 
 <script setup>
 import { ref, onMounted } from "vue";
@@ -197,42 +262,3 @@ async function deleteAccount() {
   }
 }
 </script>
-
-<style scoped>
-.profile-page {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.profile-info {
-  margin-bottom: 20px;
-}
-
-.edit-profile-form {
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 5px;
-}
-
-.btn {
-  padding: 8px 16px;
-  margin: 5px;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-</style>

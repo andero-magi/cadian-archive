@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <div class="login-form"> 
+    <div class="login-form bg-darker"> 
       <h1>Login</h1>
       <form @submit.prevent="submitForm">
         <div class="input-group">
