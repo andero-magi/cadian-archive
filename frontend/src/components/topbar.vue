@@ -4,10 +4,12 @@ import { reactive, onMounted } from "vue";
 
 const user = reactive({
   loggedIn: false,
+  id: ""
 });
 
 onMounted(() => {
   user.loggedIn = localStorage.getItem("isAuthenticated") === "true";
+  user.id = localStorage.getItem("userId")
 });
 
 function logout() {
@@ -16,6 +18,8 @@ function logout() {
   localStorage.removeItem("userId");
   
   user.loggedIn = false; 
+  user.id = ""
+
   window.location.href = "/login";
 }
 </script>
@@ -38,7 +42,7 @@ function logout() {
         </ul>
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <template v-if="user.loggedIn">
-            <li><RouterLink class="nav-link" to="/profile">View Profile</RouterLink></li>
+            <li><a class="nav-link" :href="`/profile/${user.id}`">Profile</a></li>
             <li><a class="nav-link" href="#" @click="logout">Logout</a></li>
           </template>
 

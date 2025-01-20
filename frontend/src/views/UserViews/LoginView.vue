@@ -81,6 +81,7 @@ body {
   border: 1px solid #ddd;
   padding: 20px;
   border-radius: 5px;
+  margin-top: 30vh;
 }
 
 h1 {

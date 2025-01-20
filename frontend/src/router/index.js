@@ -7,7 +7,6 @@ import LoginView from '@/views/UserViews/LoginView.vue'
 import ProfileView from '@/views/UserViews/ProfileView.vue'
 import SignUpView from '@/views/UserViews/SignUpView.vue'
 import SearchUserView from '@/views/UserViews/SearchUserView.vue'
-import ExampleView from '@/views/UserViews/ExampleView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,7 +58,7 @@ const router = createRouter({
       },
 
       {
-        path: "/profile",
+        path: "/profile/:id",
         name: "profile",
         component: ProfileView,
       },
@@ -73,11 +72,6 @@ const router = createRouter({
         name: "searchUser",
         component: SearchUserView,
         props: true, // enables route props
-      },
-      {
-        path: "/example",
-        name: "example",
-        component: ExampleView,
       }
   ],
 })

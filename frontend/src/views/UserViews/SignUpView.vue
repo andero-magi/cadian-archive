@@ -106,6 +106,7 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
+  margin-top: 25vh;
 }
 
 .signup-form {
