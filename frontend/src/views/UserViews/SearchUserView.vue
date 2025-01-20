@@ -58,7 +58,7 @@ function viewProfile(userId) {
           <h1 class="text-center my-5">Search Users</h1>
   
           <div style="max-width: 50%;" class="mx-auto">
-            <div class="input-group mb-3">
+            <form class="input-group mb-3" @submit.prevent="">
               <input
                 v-model="searchQuery"
                 type="text"
@@ -70,12 +70,12 @@ function viewProfile(userId) {
               <button
                 @click="onSearch"
                 class="btn btn-primary"
-                type="button"
+                type="submit"
                 id="search-button"
               >
                 Search
               </button>
-            </div>
+            </form>
           </div>
   
           <div class="mt-4" v-if="results.length > 0">
