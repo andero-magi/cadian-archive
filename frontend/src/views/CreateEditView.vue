@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import SingleTag from '@/components/SingleTag.vue';
-import TagEdit from '@/components/TagEdit.vue';
-import TagSearchBar from '@/components/TagSearchBar.vue';
+import TagEdit from '@/components/posts/TagEdit.vue';
 import { API_URL } from '@/consts';
 import { Content, Post } from '@/post';
 import router from '@/router';
-import { FieldSearch, TagSearch } from '@/utilities/tags-parser';
+import { TagSearch } from '@/utilities/tags-parser';
 import { getPost } from '@/utils';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
@@ -23,7 +21,7 @@ type TextContentElement = "section" | "header" | "title"
 
 if (editMode) {
   let id: string = route.params.id as string
-  let postData =  getPost(id)
+  let postData = await getPost(id)
   post.value = postData
   refreshTagsRef()
 } else {

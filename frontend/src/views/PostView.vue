@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import PageContent from "../components/PageContent.vue"
-import PostTags from "../components/PostTags.vue"
+import PageContent from "../components/posts/PostContent.vue"
+import PostTags from "../components/posts/PostTags.vue"
 import { useRoute } from "vue-router";
 import { getPost } from "@/utils";
 import Leftsidebar from "@/components/leftsidebar.vue";
