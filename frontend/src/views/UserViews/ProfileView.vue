@@ -14,8 +14,11 @@
     <div v-if="!isEditing" class="profile-info" >
       <p ><strong>Username:</strong> {{ user.username }}</p>
       <p><strong>Email:</strong> {{ user.email }}</p>
-      <button @click="toggleEdit" class="btn btn-primary">Edit Profile</button>
-      <button @click="showDeleteModal" class="btn btn-danger" >Delete Account</button>
+      
+      <div v-if="canEdit">
+        <button @click="toggleEdit" class="btn btn-primary">Edit Profile</button>
+        <button @click="showDeleteModal" class="btn btn-danger" >Delete Account</button>
+      </div>
     </div>
 
     <form v-if="isEditing" @submit.prevent="updateProfile" class="edit-profile-form">
@@ -140,6 +143,7 @@ import { ref, onMounted } from "vue";
 import { API_URL } from "@/consts";
 import PostCard from "@/components/posts/PostCard.vue";
 import { useRoute } from "vue-router";
+import router from "@/router";
 
 const user = ref(null);
 const isEditing = ref(false);
@@ -148,40 +152,47 @@ const posts = ref([])
 
 const route = useRoute()
 
+let canEdit = ref(true)
+
 const form = ref({
 username: "",
 email: "",
 password: "",
 });
 
-
-
-onMounted(async () => {
 const userId = route.params.id
+let localId = localStorage.getItem("userId")
+canEdit = userId == localId
 
-if (!userId) {
-  alert("User not logged in. Redirecting to login.");
-  window.location.href = "/login"; 
-  return;
-}
+reload()
+router.afterEach((to, from, a) => {
+  reload()
+})
+onMounted(async () => reload())
 
-try {
-  const response = await fetch(`${API_URL}/users/${userId}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch user data.");
+async function reload() {
+  if (!userId) {
+    alert("User not logged in. Redirecting to login.");
+    window.location.href = "/login"; 
+  } else {
+    try {
+      const response = await fetch(`${API_URL}/users/${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch user data.");
+      }
+
+      user.value = await response.json();
+      form.value.username = user.value.username;
+      form.value.email = user.value.email;
+
+      await getPosts(userId)
+    } catch (error) {
+      console.error("Error fetching user data:", error.message);
+      alert("Failed to load user profile. Please log in again.");
+      window.location.href = "/login"; 
+    }
   }
-
-  user.value = await response.json();
-  form.value.username = user.value.username;
-  form.value.email = user.value.email;
-
-  await getPosts(userId)
-} catch (error) {
-  console.error("Error fetching user data:", error.message);
-  alert("Failed to load user profile. Please log in again.");
-  window.location.href = "/login"; 
 }
-});
 
 async function getPosts(userId) {
 try {
@@ -245,8 +256,8 @@ try {
 }
 
 function showDeleteModal() {
-const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
-deleteModal.show();
+  const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
+  deleteModal.show();
 }
 
 async function deleteAccount() {

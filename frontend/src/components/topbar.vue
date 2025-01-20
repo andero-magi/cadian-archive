@@ -42,7 +42,7 @@ function logout() {
         </ul>
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <template v-if="user.loggedIn">
-            <li><RouterLink class="nav-link" :to="{name: 'profile', params: {id: user.id}}">View Profile</RouterLink></li>
+            <li><a class="nav-link" :href="`/profile/${user.id}`">Profile</a></li>
             <li><a class="nav-link" href="#" @click="logout">Logout</a></li>
           </template>
 
