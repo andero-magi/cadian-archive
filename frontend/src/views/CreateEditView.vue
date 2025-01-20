@@ -23,7 +23,7 @@ type TextContentElement = "section" | "header" | "title"
 
 if (editMode) {
   let id: string = route.params.id as string
-  let postData = await getPost(id)
+  let postData =  getPost(id)
   post.value = postData
   refreshTagsRef()
 } else {

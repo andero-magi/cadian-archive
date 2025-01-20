@@ -277,6 +277,49 @@
             }
         },
         "/users": {
+            "get": {
+                "parameters": [
+                    {
+                        "examples": {
+                            "Example of username": {
+                                "value": "\"david\"\n"
+                            }
+                        },
+                        "name": "Search",
+                        "description": "Username\n",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "examples": {
+                                    "Example of user": {
+                                        "value": [
+                                            {
+                                                "username": "wxe3",
+                                                "password": "",
+                                                "email": "xl",
+                                                "profilepicid": "m6"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successfuly searched for user"
+                    }
+                },
+                "summary": "Get user by username"
+            },
             "post": {
                 "requestBody": {
                     "content": {

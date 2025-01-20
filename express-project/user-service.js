@@ -1,14 +1,13 @@
 import * as UUID from "uuid"
 
 export class UserService {
-    #users = {
-
-    };
+    #users = {};
 
 
-constructor(){
-
+    constructor() {
+        this.#users = {}; // create private field
     }
+
     
     generateUserId(){
         return UUID.v7();
@@ -21,6 +20,7 @@ constructor(){
 
     async createUser(userdata){
         this.#users[userdata.id] = userdata;userdata;
+        return userdata;
     }
 
 modifyUser(id,username, password, email){
@@ -41,6 +41,17 @@ modifyUser(id,username, password, email){
             return true;
         }
         return false;
+    }
+    
+    getAllUsers() {
+        return Object.values(this.#users);
+    }
+
+    getUsersByName(partialUsername){
+        const users = this.getAllUsers();
+        return users.filter(user => 
+            user.username.toLowerCase().includes(partialUsername.toLowerCase())
+        );
     }
     
 }

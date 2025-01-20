@@ -3,6 +3,10 @@ import HomeView from '../views/HomeView.vue'
 import PostView from '@/views/PostView.vue'
 import PostList from '@/views/PostList.vue'
 import CreateEditView from '@/views/CreateEditView.vue'
+import LoginView from '@/views/UserViews/LoginView.vue'
+import ProfileView from '@/views/UserViews/ProfileView.vue'
+import SignUpView from '@/views/UserViews/SignUpView.vue'
+import SearchUserView from '@/views/UserViews/SearchUserView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,7 +50,29 @@ const router = createRouter({
       props: {
         "edit": false
       }
-    }
+    },
+    { 
+      path: "/login",
+      name: "login",
+      component: LoginView,
+      },
+
+      {
+        path: "/profile",
+        name: "profile",
+        component: ProfileView,
+      },
+      {
+        path: "/signup",
+        name: "signup",
+        component: SignUpView,
+      },
+      {
+        path: "/searchUser",
+        name: "searchUser",
+        component: SearchUserView,
+        props: true, // enables route props
+      },
   ],
 })
 
