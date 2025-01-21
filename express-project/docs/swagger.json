@@ -278,6 +278,9 @@
         },
         "/users": {
             "get": {
+                "tags": [
+                    "Users"
+                ],
                 "parameters": [
                     {
                         "examples": {
@@ -286,9 +289,12 @@
                             }
                         },
                         "name": "Search",
-                        "description": "Username\n",
+                        "description": "User\n",
                         "schema": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         },
                         "in": "query",
                         "required": true
@@ -318,7 +324,7 @@
                         "description": "Successfuly searched for user"
                     }
                 },
-                "summary": "Get user by username"
+                "summary": "Get all users"
             },
             "post": {
                 "requestBody": {

@@ -64,7 +64,8 @@ export class UsersController {
       return res.status(200).send(matchingUsers);
     }
 
-    return res.status(400).send({ error: "Either 'id' or 'username' query parameter is required" });
+    const allUsers = await this.userService.getAllUsers();
+    return res.status(200).send(allUsers);
   }
 
   async deleteUser(req, res) {
